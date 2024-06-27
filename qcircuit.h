@@ -47,3 +47,9 @@ public:
 private:
     void add_level();
 };
+
+//
+// Quantum circuit generators
+//
+
+QCircuit QAOA(int numQubits);

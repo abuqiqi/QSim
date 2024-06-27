@@ -78,6 +78,18 @@ bool QGate::isIDE() {
     return gname == "IDE";
 }
 
+bool QGate::isSingle() {
+    return gname != "IDE" && controlQubits.size() == 0 && targetQubits.size() == 1;
+}
+
+bool QGate::is2QubitControl(int qid) {
+    return controlQubits.size() == 1 && targetQubits.size() == 1 && controlQubits[0] == qid;
+}
+
+bool QGate::is2QubitControlled(int qid) {
+    return controlQubits.size() == 1 && targetQubits.size() == 1 && targetQubits[0] == qid;
+}
+
 bool QGate::isTargetQubit(int qid) {
     return find(targetQubits.begin(), targetQubits.end(), qid) != targetQubits.end();
 }

@@ -18,8 +18,11 @@ public:
     int numQubits();
     int numControlQubits();
     int numTargetQubits();
-    
+
     bool isIDE();
+    bool isSingle();
+    bool is2QubitControl(int qid);
+    bool is2QubitControlled(int qid);
     bool isTargetQubit(int qid);
     bool isControlQubit(int qid);
 
