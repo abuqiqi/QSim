@@ -1,11 +1,12 @@
 #include "qgate.h"
 
-// string to_string(double d) {
-//     ostringstream os;
-//     os << fixed << setprecision(6) << d;
-//     return os.str();
-// }
-
+/**
+ * @brief Construct a new QGate::QGate object, initialize the gate matrix with the given name
+ * 
+ * @param gname_ the gate name
+ * @param controls_ control qubits
+ * @param targets_ target qubits
+ */
 QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
     gname = gname_;
     controlQubits = controls_;
@@ -18,6 +19,14 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
     }
 }
 
+/**
+ * @brief Construct a new QGate::QGate object with a parameter
+ * 
+ * @param gname_ the gate name
+ * @param controls_ control qubits
+ * @param targets_ target qubits
+ * @param theta a parameter
+ */
 QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta) {
     gname = gname_;
     controlQubits = controls_;
@@ -47,6 +56,11 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     gmat = Matrix<DTYPE>::MatrixDict[matkey];
 }
 
+/**
+ * @brief Copy construct a new QGate::QGate object
+ * 
+ * @param other 
+ */
 QGate::QGate(const QGate& other) {
     gname = other.gname;
     controlQubits = other.controlQubits;
@@ -54,6 +68,12 @@ QGate::QGate(const QGate& other) {
     gmat = other.gmat;
 }
 
+/**
+ * @brief Copy assignment
+ * 
+ * @param other 
+ * @return QGate& 
+ */
 QGate& QGate::operator=(const QGate& other) {
     gname = other.gname;
     controlQubits = other.controlQubits;
@@ -62,42 +82,62 @@ QGate& QGate::operator=(const QGate& other) {
     return *this;
 }
 
+// Return the number of input/output qubits of the gate
 int QGate::numQubits() {
     return controlQubits.size() + targetQubits.size();
 }
 
+// Return the number of control qubits of the gate
 int QGate::numControlQubits() {
     return controlQubits.size();
 }
 
+// Return the number of target qubits of the gate
 int QGate::numTargetQubits() {
     return targetQubits.size();
 }
 
+// Check if the gate is an identity gate
 bool QGate::isIDE() {
     return gname == "IDE";
 }
 
+// Check if the gate is a single-qubit gate
 bool QGate::isSingle() {
     return gname != "IDE" && controlQubits.size() == 0 && targetQubits.size() == 1;
 }
 
+// Check if qubit[qid] is the control qubit of the 2-qubit gate
 bool QGate::is2QubitControl(int qid) {
     return controlQubits.size() == 1 && targetQubits.size() == 1 && controlQubits[0] == qid;
 }
 
-bool QGate::is2QubitControlled(int qid) {
+// Check if qubit[qid] is the target qubit of the 2-qubit gate
+bool QGate::is2QubitTarget(int qid) {
     return controlQubits.size() == 1 && targetQubits.size() == 1 && targetQubits[0] == qid;
 }
 
-bool QGate::isTargetQubit(int qid) {
-    return find(targetQubits.begin(), targetQubits.end(), qid) != targetQubits.end();
-}
-
+// Check if qubit[qid] is a control qubit of the gate
 bool QGate::isControlQubit(int qid) {
     return find(controlQubits.begin(), controlQubits.end(), qid) != controlQubits.end();
 }
 
+// Check if qubit[qid] is a target qubit of the gate
+bool QGate::isTargetQubit(int qid) {
+    return find(targetQubits.begin(), targetQubits.end(), qid) != targetQubits.end();
+}
+
+// Check if the gate matrix is a 2x2 matrix
+bool QGate::is2x2GateMatrix() {
+    return gmat->row == 2 && gmat->col == 2;
+}
+
+// Check if the gate matrix is a 4x4 matrix
+bool QGate::is4x4GateMatrix() {
+    return gmat->row == 4 && gmat->col == 4;
+}
+
+// Print the gate information
 void QGate::print() {
     cout << "===== Gate: " << gname << " =====" << endl;
     cout << "Control qubits: ";
@@ -113,6 +153,7 @@ void QGate::print() {
     gmat->print();
 }
 
+// Destructor
 QGate::~QGate() {
     return;
 }

@@ -32,11 +32,6 @@ public:
     void swap(int qid1, int qid2);
 
     //
-    // Special gates
-    //
-    // void phaseInv(vector<ll> indices);
-
-    //
     // Other operations on quantum circuits
     //
     void barrier();

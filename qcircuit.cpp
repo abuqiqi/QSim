@@ -162,7 +162,7 @@ void QCircuit::swap(int qid1, int qid2) {
         add_level();
     }
     gates[numDepths-1][qid1] = QGate("SWAP", {}, {qid1, qid2});
-    gates[numDepths-1][qid2] = QGate("SWAP", {}, {qid1, qid2});
+    // gates[numDepths-1][qid2] = QGate("SWAP", {}, {qid1, qid2});
 }
 
 /**
@@ -252,7 +252,7 @@ QCircuit QAOA(int numQubits) {
             qc.cx(j, i);
         }
     }
-        
+
     for (int i = 0; i < numQubits; ++ i)
         qc.h(i);
     for (int i = 0; i < numQubits; ++ i)

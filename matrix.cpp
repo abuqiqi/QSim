@@ -313,7 +313,7 @@ void Matrix<T>::initMatrixDict() {
     // T minus[2][1] = {{1.0 / sqrt(2)}, {-1.0 / sqrt(2)}};
     // MatrixDict["MINUS"] = make_shared<Matrix<T>>(2, 1, (T**)minus);
 
-    // // -------------- Gates -----------------
+    // -------------- Gates -----------------
 
     T ide[2][2] = {{1, 0},
                    {0, 1}};
@@ -322,6 +322,7 @@ void Matrix<T>::initMatrixDict() {
     T h[2][2] = {{1.0 / sqrt(2), 1.0 / sqrt(2)},
                  {1.0 / sqrt(2), -1.0 / sqrt(2)}};
     MatrixDict["H"] = make_shared<Matrix<T>>(2, 2, (T**)h);
+    MatrixDict["CH"] = MatrixDict["H"];
 
     T x[2][2] = {{0, 1},
                  {1, 0}};
@@ -343,58 +344,7 @@ void Matrix<T>::initMatrixDict() {
                     {0, 1, 0, 0},
                     {0, 0, 0, 1}};
     MatrixDict["SWAP"] = make_shared<Matrix<T>>(4, 4, (T**)swap);
-
-    // T cx[4][4] = {{1, 0, 0, 0},
-    //               {0, 1, 0, 0},
-    //               {0, 0, 0, 1},
-    //               {0, 0, 1, 0}};
-    // MatrixDict["CX"] = make_shared<Matrix<T>>(4, 4, (T**)cx);
-
-    // T cz[4][4] = {{1, 0, 0, 0},
-    //               {0, 1, 0, 0},
-    //               {0, 0, 1, 0},
-    //               {0, 0, 0, -1}};
-    // MatrixDict["CZ"] = make_shared<Matrix<T>>(4, 4, (T**)cz);
-
-    // T ch[4][4] = {{1, 0, 0, 0},
-    //               {0, 1, 0, 0},
-    //               {0, 0, 1.0/ sqrt(2), 1.0/ sqrt(2)},
-    //               {0, 0, 1.0/ sqrt(2), -1.0/ sqrt(2)}};
-    // MatrixDict["CH"] = make_shared<Matrix<T>>(4, 4, (T**)ch);
-
-    // T zcx[4][4] = {{0, 1, 0, 0},
-    //                {1, 0, 0, 0},
-    //                {0, 0, 1, 0},
-    //                {0, 0, 0, 1}};
-    // MatrixDict["ZCX"] = make_shared<Matrix<T>>(4, 4, (T**)zcx);
-
-    // T dcx[4][4] = {{1, 0, 0, 0},
-    //                {0, 0, 0, 1},
-    //                {0, 1, 0, 0},
-    //                {0, 0, 1, 0}};
-    // MatrixDict["DCX"] = make_shared<Matrix<T>>(4, 4, (T**)dcx);
-
-    // T ccx[8][8] = {{1, 0, 0, 0, 0, 0, 0, 0},
-    //                {0, 1, 0, 0, 0, 0, 0, 0},
-    //                {0, 0, 1, 0, 0, 0, 0, 0},
-    //                {0, 0, 0, 1, 0, 0, 0, 0},
-    //                {0, 0, 0, 0, 1, 0, 0, 0},
-    //                {0, 0, 0, 0, 0, 1, 0, 0},
-    //                {0, 0, 0, 0, 0, 0, 0, 1},
-    //                {0, 0, 0, 0, 0, 0, 1, 0}};
-    // MatrixDict["CCX"] = make_shared<Matrix<T>>(8, 8, (T**)ccx);
-
-    // T cswap[8][8] = {{1, 0, 0, 0, 0, 0, 0, 0},
-    //                  {0, 1, 0, 0, 0, 0, 0, 0},
-    //                  {0, 0, 1, 0, 0, 0, 0, 0},
-    //                  {0, 0, 0, 1, 0, 0, 0, 0},
-    //                  {0, 0, 0, 0, 1, 0, 0, 0},
-    //                  {0, 0, 0, 0, 0, 0, 1, 0},
-    //                  {0, 0, 0, 0, 0, 1, 0, 0},
-    //                  {0, 0, 0, 0, 0, 0, 0, 1}};
-    // MatrixDict["CSWAP"] = make_shared<Matrix<T>>(8, 8, (T**)cswap);
-
-    std::cout << "[DEBUG] Global gate matrices initialized." << std::endl;
+    MatrixDict["CSWAP"] = MatrixDict["SWAP"];
 }
 
 template class Matrix<DTYPE>;
