@@ -19,7 +19,7 @@ The data type of the matrix elements can be set in `matrix.h` as follows.
 ### 1.2. Quantum Gates
 
 > qgate.[h/cpp]
-//
+
 In `qgate.[h/cpp]`, we implement the structure of quantum gates `QGate`, which has four data members, i.e., `gname`, `controlQubits`, `targetQubits`, `gmat`. To save memory footprints, `gmat` is a shared pointer to a global gate matrix map `MatrixDict` defined in `matrix.[h/cpp]`. 
 Some common gate matrices are already initialized. 
 When creating a new gate, we can first add a new gate matrix entry to `MatrixDict` by modifying function `void Matrix<T>::initMatrixDict()`. Then, make the `gmat` member of this new gate point to this entry. 
@@ -41,14 +41,18 @@ In a quantum circuit, the operations on qubits are described using quantum gates
 The state vector of an $n$-qubit circuit has a size of $2^n$. To change its state, the operation matrix simulation constructs an operation matrix of $2^n \times 2^n$ at each level of the circuit. 
 Let $M_i^j$ be the $i$-th quantum gate matrix from high-order to low-order at the $j$-th level. 
 The operation matrix $O_j$ of level $j$ can be constructed by
+
 $$
     O_j=M_0^j \otimes M_1^j \otimes M_2^j \otimes \ldots, 
 $$
+
 where $\otimes$ refers to the tensor product of matrices. If no gate is applied to a qubit, it can be supplemented with a $2\times2$ identity gate $I$. 
 The operation matrix of a $T$-level circuit, denoted as $O$, can be constructed by
+
 $$
     O = O_{T-1} \cdot O_{T-2} \cdot \ldots \cdot O_0. 
 $$
+
 Then, the state vector after $T$ levels can be updated as $\ket{\phi_T} = O \ket{\phi_0}$, where $\ket{\phi_0}$ is the initial state vector. 
 The time complexity of the multiplication of the $2^n \times 2^n$ operation matrix and $2^n$ state vector at every level is $O(2^{2n})$. 
 
