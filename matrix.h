@@ -33,6 +33,7 @@ public:
     Matrix operator+(const Matrix& matrx) const; // Matrix addition
     Matrix& operator+=(const Matrix& matrx); // Matrix addition
     Matrix operator*(const Matrix& matrx) const; // Matrix multiplication
+    Matrix operator*(const vector<T&>& vec) const; // Matrix-vector multiplication
     Matrix tensorProduct(const Matrix& matrx) const; // Tensor product
 
     void rotationX(double theta); // Rotation X gate matrix

@@ -11,6 +11,8 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
+    sort(targetQubits.begin(), targetQubits.end());
+    sort(controlQubits.begin(), controlQubits.end());
 
     gmat = Matrix<DTYPE>::MatrixDict[gname];
     if (gmat == nullptr) {
@@ -31,6 +33,8 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
+    sort(targetQubits.begin(), targetQubits.end());
+    sort(controlQubits.begin(), controlQubits.end());
 
     string matkey = gname + to_string(theta);
     gmat = Matrix<DTYPE>::MatrixDict[matkey];
@@ -41,7 +45,6 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     }
 
     Matrix<DTYPE> mat;
-
     if (gname == "RX") {
         mat.rotationX(theta);
     } else if (gname == "RY") {
@@ -88,12 +91,12 @@ int QGate::numQubits() {
 }
 
 // Return the number of control qubits of the gate
-int QGate::numControlQubits() {
+int QGate::numControls() {
     return controlQubits.size();
 }
 
 // Return the number of target qubits of the gate
-int QGate::numTargetQubits() {
+int QGate::numTargets() {
     return targetQubits.size();
 }
 
@@ -102,19 +105,19 @@ bool QGate::isIDE() {
     return gname == "IDE";
 }
 
+// Check if the gate is a placeholder gate
+bool QGate::isMARK() {
+    return gname == "MARK";
+}
+
 // Check if the gate is a single-qubit gate
 bool QGate::isSingle() {
     return gname != "IDE" && controlQubits.size() == 0 && targetQubits.size() == 1;
 }
 
-// Check if qubit[qid] is the control qubit of the 2-qubit gate
-bool QGate::is2QubitControl(int qid) {
-    return controlQubits.size() == 1 && targetQubits.size() == 1 && controlQubits[0] == qid;
-}
-
-// Check if qubit[qid] is the target qubit of the 2-qubit gate
-bool QGate::is2QubitTarget(int qid) {
-    return controlQubits.size() == 1 && targetQubits.size() == 1 && targetQubits[0] == qid;
+// Check if the gate is a 2-qubit controlled gate
+bool QGate::is2QubitControlled() {
+    return controlQubits.size() == 1 && targetQubits.size() == 1;
 }
 
 // Check if qubit[qid] is a control qubit of the gate

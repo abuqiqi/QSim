@@ -3,20 +3,38 @@
 #include "qcircuit.h"
 
 /**
- * @brief State vector simulation of a gate on the state vector
+ * @brief State vector simulation of a quantum circuit on the state vector
  *
  * @param sv    the initial state vector
- * @param svlen the length of the state vector
  * @param qc    a quantum circuit
  */
-void StateVectorSim(Matrix<DTYPE>& sv, long long svlen, QCircuit& qc);
+void StateVectorSim(Matrix<DTYPE>& sv, QCircuit& qc);
 
 //
 // Utility functions
 //
 
-void svsim2x2GateMatrix(Matrix<DTYPE>& sv, long long svlen, QGate& gate);
-void apply2x2GateMatrix(shared_ptr<Matrix<DTYPE>> gmat, DTYPE &a, DTYPE &b);
+/**
+ * @brief State vector simulation for a quantum gate
+ * 
+ * @param sv    the state vector
+ * @param gate  the processing gate
+ */
+void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
 
-void svsim4x4GateMatrix(Matrix<DTYPE>& sv, long long svlen, QGate& gate);
-void apply4x4GateMatrix(shared_ptr<Matrix<DTYPE>> gmat, DTYPE &a, DTYPE &b, DTYPE &c, DTYPE &d);
+/**
+ * @brief Check if the index of a amplitude contains a legal control mask of the gate
+ * 
+ * @param amp  the amplitude index
+ * @param gate the processing gate
+ * @return int 0: illegal control mask; 1: legal control mask
+ */
+int checkControlMask(ll amp, QGate& gate);
+
+/**
+ * @brief Conduct multiplication of gate matrix and involved amplitude vector
+ * 
+ * @param gmat the gate matrix
+ * @param amps a vector consisting of the amplitudes involved
+ */
+void applyGateMatrix(shared_ptr<Matrix<DTYPE>> gmat, vector<DTYPE&>& amps_vec);

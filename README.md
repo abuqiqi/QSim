@@ -68,12 +68,11 @@ For a single-qubit gate $G_A$, applying it to the $k$-th qubit is equivalent to 
 
 $$
 \begin{bmatrix}
-    \alpha_{*...*0_k*...*}^\prime\\
+    \alpha_{*...*0_k*...*}^\prime \\
     \alpha_{*...*1_k*...*}^\prime
-\end{bmatrix}
-=G_A \cdot
+\end{bmatrix} =G_A \cdot
 \begin{bmatrix}
-    \alpha_{*...*0_k*...*}\\
+    \alpha_{*...*0_k*...*} \\
     \alpha_{*...*1_k*...*}
 \end{bmatrix}.
 $$
@@ -86,14 +85,14 @@ $$
 \begin{bmatrix}
 \alpha_{*...*1_c*...*0_t*...*}^\prime\\
 \alpha_{*...*1_c*...*1_t*...*}^\prime
-\end{bmatrix}=
-G_{B}\cdot\begin{bmatrix}
+\end{bmatrix}=G_{B}\cdot\begin{bmatrix}
 \alpha_{*...*1_c*...*0_t*...*}\\
 \alpha_{*...*1_c*...*1_t*...*}
 \end{bmatrix}.
 $$
 
 For a non-controlled 2-qubit gate $G_C$ of size $4\times4$ on $q_c$ and $q_t$, SVSim can be described as: 
+
 $$
 \begin{bmatrix}
 \alpha_{*...*0_c*...*0_t*...*}^\prime\\

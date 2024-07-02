@@ -14,7 +14,7 @@ int cost(QCircuit qc) {
         for (int i = 0; i < qc.gates[j].size(); ++ i) {
             if (qc.gates[j][i].isSingle()) {
                 numMult += 2 * N;
-            } else if (qc.gates[j][i].is2QubitControlled(i)) {
+            } else if (qc.gates[j][i].is2QubitControlled()) {
                 numMult += N;
             }
         }
