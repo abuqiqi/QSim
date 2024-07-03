@@ -5,8 +5,8 @@
 /**
  * @brief State vector simulation of a quantum circuit on the state vector
  *
- * @param sv    a state vector
- * @param qc    a quantum circuit
+ * @param sv the state vector
+ * @param qc a quantum circuit
  */
 void StateVectorSim(Matrix<DTYPE>& sv, QCircuit& qc);
 
@@ -17,8 +17,8 @@ void StateVectorSim(Matrix<DTYPE>& sv, QCircuit& qc);
 /**
  * @brief State vector simulation for a quantum gate
  * 
- * @param sv    the state vector
- * @param gate  the processing gate
+ * @param sv   the state vector
+ * @param gate the processing gate
  */
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
 
@@ -30,11 +30,3 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
  * @return int 0: illegal control mask; 1: legal control mask
  */
 int checkControlMask(ll amp, QGate& gate);
-
-/**
- * @brief Conduct multiplication of gate matrix and involved amplitude vector
- * 
- * @param gmat the gate matrix
- * @param amps a vector consisting of the amplitudes involved
- */
-void applyGateMatrix(shared_ptr<Matrix<DTYPE>> gmat, vector<DTYPE&>& amps_vec);

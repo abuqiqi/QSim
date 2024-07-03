@@ -29,7 +29,7 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
     memset(isAccessed, 0, sv.row*sizeof(bool));
     
     ll numAmps = (1 << gate.numTargets()); // the number of amplitudes involved in matrix-vector multiplication
-    vector<DTYPE&> amps_vec;
+    Matrix<DTYPE> amps_vec(numAmps, 1);
 
     // 1. Calculate the strides for the involved amplitudes
     /*  <e.g.>
@@ -65,14 +65,13 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
         if (isAccessed[ampidx]) continue;
 
         // 2.2. Get the involved amplitudes and mark them as accessed
-        amps_vec.clear();
-        for (auto& stride : strides) {
-            if (ampidx + stride >= sv.row) {
+        for (ll idx = 0; idx < numAmps; ++ idx) {
+            if (ampidx + strides[idx] >= sv.row) {
                 cout << "[ERROR] Exceed the length of the state vector." << endl;
                 exit(1);
             }
-            amps_vec.push_back(sv.data[ampidx + stride][0]);
-            isAccessed[ampidx + stride] = true;
+            amps_vec.data[idx][0] = sv.data[ampidx + strides[idx]][0];
+            isAccessed[ampidx + strides[idx]] = true;
         }
 
         // 3. Check the control bits of the current amplitude
@@ -82,8 +81,11 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
             continue;
         }
 
-        // 4. Apply the gate matrix
-        applyGateMatrix(gate.gmat, amps_vec);
+        // 4. [TODO] Apply the gate matrix
+        amps_vec = (*gate.gmat) * amps_vec;
+        for (ll idx = 0; idx < numAmps; ++ idx) {
+            sv.data[ampidx + strides[idx]][0] = amps_vec.data[idx][0];
+        }
     }
 }
 
@@ -114,22 +116,4 @@ int checkControlMask(ll amp, QGate& gate) {
         ////////////////////////////////////////////////////////////
     }
     return 1;
-}
-
-/**
- * @brief Conduct multiplication of gate matrix and involved amplitude vector
- * 
- * @param gmat the gate matrix
- * @param amps a vector consisting of the amplitudes involved
- */
-void applyGateMatrix(shared_ptr<Matrix<DTYPE>> gmat, vector<DTYPE&>& amps_vec) {
-    // [TODO] Conduct matrix-vector multiplication /////////////
-    // [HINT] use Matrix operator*(const vector<T&>& vec) const;
-    Matrix<DTYPE> amps_temp = move((*gmat) * amps_vec);
-    ////////////////////////////////////////////////////////////
-    // [TODO] Copy the result back to the amplitude vector
-    for (ll idx = 0; idx < amps_temp.row; ++ idx) {
-        amps_vec[idx] = amps_temp.data[idx][0];
-    }
-    ////////////////////////////////////////////////////////////
 }

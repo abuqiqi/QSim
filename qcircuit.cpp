@@ -116,12 +116,15 @@ void QCircuit::rz(double theta, int qid) {
  * @param targ  target qubit id
  */
 void QCircuit::cx(int ctrl, int targ) {
-    if (! gates[numDepths-1][ctrl].isIDE() || ! gates[numDepths-1][targ].isIDE()) {
-        add_level();
-    }
     int start = min(ctrl, targ);
     int end = max(ctrl, targ);
-    for (int i = start; i <= end; ++i) {
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
+    for (int i = start; i <= end; ++ i) {
         gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("CX", {ctrl}, {targ});
@@ -134,11 +137,14 @@ void QCircuit::cx(int ctrl, int targ) {
  * @param targ  target qubit id
  */
 void QCircuit::cy(int ctrl, int targ) {
-    if (! gates[numDepths-1][ctrl].isIDE() || ! gates[numDepths-1][targ].isIDE()) {
-        add_level();
-    }
     int start = min(ctrl, targ);
     int end = max(ctrl, targ);
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
     for (int i = start; i <= end; ++i) {
         gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
     }
@@ -152,11 +158,14 @@ void QCircuit::cy(int ctrl, int targ) {
  * @param targ  target qubit id
  */
 void QCircuit::cz(int ctrl, int targ) {
-    if (! gates[numDepths-1][ctrl].isIDE() || ! gates[numDepths-1][targ].isIDE()) {
-        add_level();
-    }
     int start = min(ctrl, targ);
     int end = max(ctrl, targ);
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
     for (int i = start; i <= end; ++i) {
         gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
     }
@@ -170,15 +179,18 @@ void QCircuit::cz(int ctrl, int targ) {
  * @param qid2  qubit id 2
  */
 void QCircuit::swap(int qid1, int qid2) {
-    if (! gates[numDepths-1][qid1].isIDE() || ! gates[numDepths-1][qid2].isIDE()) {
-        add_level();
-    }
     int start = min(qid1, qid2);
     int end = max(qid1, qid2);
-    for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {}, {qid1, qid2});
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
     }
-    gates[numDepths-1][qid1] = QGate("SWAP", {}, {qid1, qid2});
+    for (int i = start; i <= end; ++i) {
+        gates[numDepths-1][i] = QGate("MARK", {}, {end});
+    }
+    gates[numDepths-1][end] = QGate("SWAP", {}, {start, end});
 }
 
 /**

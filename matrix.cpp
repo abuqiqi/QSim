@@ -162,7 +162,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& matrx) const {
 
 // Matrix-vector multiplication C = A * B
 template<typename T>
-Matrix<T> Matrix<T>::operator*(const vector<T&>& vec) const {
+Matrix<T> Matrix<T>::operator*(const vector<T>& vec) const {
     if (col != vec.size()) {
         cout << "[ERROR] Matrix * vector: col != vec.size(). " << endl;
         exit(1);
@@ -246,10 +246,10 @@ void Matrix<T>::rotationZ(double theta) {
 
 // Set the matrix to be an identity matrix
 template<typename T>
-void Matrix<T>::identity(ll r, ll c) {
+void Matrix<T>::identity(ll r) {
     clear();
     row = r;
-    col = c;
+    col = r;
     data = new T*[row];
     for (ll i = 0; i < row; i++) {
         data[i] = new T[col];

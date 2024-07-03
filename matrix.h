@@ -33,14 +33,14 @@ public:
     Matrix operator+(const Matrix& matrx) const; // Matrix addition
     Matrix& operator+=(const Matrix& matrx); // Matrix addition
     Matrix operator*(const Matrix& matrx) const; // Matrix multiplication
-    Matrix operator*(const vector<T&>& vec) const; // Matrix-vector multiplication
+    Matrix operator*(const vector<T>& vec) const; // Matrix-vector multiplication
     Matrix tensorProduct(const Matrix& matrx) const; // Tensor product
 
     void rotationX(double theta); // Rotation X gate matrix
     void rotationY(double theta); // Rotation Y gate matrix
     void rotationZ(double theta); // Rotation Z gate matrix
 
-    void identity(ll r, ll c); // Set the matrix to be an identity matrix
+    void identity(ll r); // Set the matrix to be an identity matrix
     void zero(ll r, ll c); // Set the matrix to be a zero matrix
 
     //
