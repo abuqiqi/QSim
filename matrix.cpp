@@ -160,22 +160,6 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& matrx) const {
     return temp;
 }
 
-// Matrix-vector multiplication C = A * B
-template<typename T>
-Matrix<T> Matrix<T>::operator*(const vector<T>& vec) const {
-    if (col != vec.size()) {
-        cout << "[ERROR] Matrix * vector: col != vec.size(). " << endl;
-        exit(1);
-    }
-    Matrix<T> temp(row, 1);
-    for (ll i = 0; i < row; i++) {
-        for (ll j = 0; j < col; j++) {
-            temp.data[i][0] += data[i][j] * vec[j];
-        }
-    }
-    return temp;
-}
-
 // Tensor product C = A tensorProduct B
 template<typename T>
 Matrix<T> Matrix<T>::tensorProduct(const Matrix<T>& matrx) const {

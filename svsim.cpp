@@ -99,7 +99,7 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
 int checkControlMask(ll amp, QGate& gate) {
     int ctrl;
     ll ctrlmask = 0;
-    for (size_t i = 0; i < gate.numControls(); ++ i) {
+    for (int i = 0; i < gate.numControls(); ++ i) {
         // [TODO] Check the control qubit of the gate /////////////
         ctrl = gate.controlQubits[i];
         ctrlmask += (1 << ctrl);

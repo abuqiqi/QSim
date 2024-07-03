@@ -188,7 +188,7 @@ void QCircuit::swap(int qid1, int qid2) {
         }
     }
     for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {}, {end});
+        gates[numDepths-1][i] = QGate("MARK", {}, {start, end});
     }
     gates[numDepths-1][end] = QGate("SWAP", {}, {start, end});
 }
