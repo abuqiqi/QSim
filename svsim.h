@@ -5,7 +5,7 @@
 /**
  * @brief State vector simulation of a quantum circuit on the state vector
  *
- * @param sv    the initial state vector
+ * @param sv    a state vector
  * @param qc    a quantum circuit
  */
 void StateVectorSim(Matrix<DTYPE>& sv, QCircuit& qc);
