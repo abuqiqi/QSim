@@ -47,4 +47,5 @@ private:
 // Quantum circuit generators
 //
 
+QCircuit QFT(int numQubits);
 QCircuit QAOA(int numQubits);

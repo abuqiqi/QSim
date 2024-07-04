@@ -9,6 +9,7 @@ public:
     vector<int> targetQubits; // the target qubits of the gate
     shared_ptr<Matrix<DTYPE>> gmat; // the gate matrix
     
+    QGate();
     QGate(string gname_, vector<int> controls_, vector<int> targets_);
     QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta);
     QGate(const QGate& other);
@@ -34,3 +35,11 @@ public:
 
     ~QGate();
 };
+
+//
+// Utility functions
+//
+
+// Compare two integers by their absolute values
+// Control qubits can be negative to denote 0-controlled
+bool compareByAbsoluteValue(int a, int b);

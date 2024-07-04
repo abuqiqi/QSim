@@ -1,5 +1,12 @@
 #include "qgate.h"
 
+QGate::QGate() {
+    gname = "NULL";
+    controlQubits = {};
+    targetQubits = {};
+    gmat = nullptr;
+}
+
 /**
  * @brief Construct a new QGate::QGate object, initialize the gate matrix with the given name
  * 
@@ -159,4 +166,10 @@ void QGate::print() {
 // Destructor
 QGate::~QGate() {
     return;
+}
+
+// Compare two integers by their absolute values
+// Control qubits can be negative to denote 0-controlled
+bool compareByAbsoluteValue(int a, int b) {
+    return std::abs(a) < std::abs(b);
 }
