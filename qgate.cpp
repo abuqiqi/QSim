@@ -18,9 +18,6 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
-    sort(targetQubits.begin(), targetQubits.end());
-    sort(controlQubits.begin(), controlQubits.end());
-
     gmat = Matrix<DTYPE>::MatrixDict[gname];
     if (gmat == nullptr) {
         cout << "[ERROR] Gate " << gname << " not found in MatrixDict" << endl;
@@ -40,12 +37,9 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
-    sort(targetQubits.begin(), targetQubits.end());
-    sort(controlQubits.begin(), controlQubits.end());
-
+    
     string matkey = gname + to_string(theta);
     gmat = Matrix<DTYPE>::MatrixDict[matkey];
-
     if (gmat != nullptr) { // the gate matrix already exists
         cout << "[DEBUG] Matrix already exists: " << matkey << ", " << gmat << endl;
         return;

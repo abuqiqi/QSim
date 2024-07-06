@@ -39,7 +39,6 @@ public:
     void print();
     void printInfo();
 
-private:
     void add_level();
 };
 
