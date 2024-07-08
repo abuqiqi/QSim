@@ -62,13 +62,13 @@ Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
         // [TODO] Return the complete matrix of a 2-qubit controlled gate
         // cout << "[TODO] return the complete matrix of a 2-qubit controlled gate" << endl;
         // exit(1);
-        return genControlledGate(gate);
+        return genControlledGateMatrix(gate);
     }
     if (gate.gname == "SWAP") {
         // [TODO] Return the complete matrix of a SWAP gate
         // cout << "[TODO] return the complete matrix of a SWAP gate" << endl;
         // exit(1);
-        return genSwapGate(gate);
+        return genSwapGateMatrix(gate);
     }
     cout << "[ERROR] getCompleteMatrix: " << gate.gname << " not implemented" << endl;
     exit(1);
@@ -80,7 +80,7 @@ Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
 */
-Matrix<DTYPE> genControlledGate(QGate& gate) {
+Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
     cout << "[ERROR] Not implemented" << endl;
     return Matrix<DTYPE>();
 }
@@ -91,7 +91,7 @@ Matrix<DTYPE> genControlledGate(QGate& gate) {
  * @param gate the processing SWAP gate
  * @return Matrix<DTYPE> a complete gate matrix
  */
-Matrix<DTYPE> genSwapGate(QGate& gate) {
+Matrix<DTYPE> genSwapGateMatrix(QGate& gate) {
     int span = abs(gate.targetQubits[0] - gate.targetQubits[1]);
     Matrix<DTYPE> mat;
     mat.identity(1 << span);

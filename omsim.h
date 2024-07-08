@@ -3,7 +3,7 @@
 #include "qcircuit.h"
 
 /**
- * @brief Operation matrix simulation of a quantum circuit
+ * @brief [TODO] Operation matrix simulation of a quantum circuit
  * 
  * @param sv the state vector
  * @param qc a quantum circuit
@@ -16,7 +16,7 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc);
 //
 
 /**
- * @brief Get a complete gate matrix according to the applied qubits
+ * @brief [TODO] Get a complete gate matrix according to the applied qubits
  * 
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
@@ -24,12 +24,12 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc);
 Matrix<DTYPE> getCompleteMatrix(QGate& gate);
 
 /**
- * @brief Generate the gate matrix of a controlled gate
+ * @brief [TODO] Generate the gate matrix of a controlled gate
  *
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
 */
-Matrix<DTYPE> genControlledGate(QGate& gate);
+Matrix<DTYPE> genControlledGateMatrix(QGate& gate);
 
 /**
  * @brief Generate the gate matrix of a swap gate
@@ -37,7 +37,7 @@ Matrix<DTYPE> genControlledGate(QGate& gate);
  * @param gate the processing SWAP gate
  * @return Matrix<DTYPE> a complete gate matrix
  */
-Matrix<DTYPE> genSwapGate(QGate& gate);
+Matrix<DTYPE> genSwapGateMatrix(QGate& gate);
 
 /**
  * @brief Swap two rows of a gate matrix

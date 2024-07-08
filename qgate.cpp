@@ -128,7 +128,7 @@ bool QGate::isControlQubit(int qid) {
 
 // Check if qubit[qid] is a target qubit of the gate
 bool QGate::isTargetQubit(int qid) {
-    return gname != "IDE" && find(targetQubits.begin(), targetQubits.end(), qid) != targetQubits.end();
+    return gname != "IDE" && gname != "MARK" && find(targetQubits.begin(), targetQubits.end(), qid) != targetQubits.end();
 }
 
 // Check if the gate matrix is a 2x2 matrix
