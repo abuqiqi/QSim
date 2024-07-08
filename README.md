@@ -8,7 +8,7 @@ This repo provides some basic data structures and functions necessary for quantu
 
 > matrix.[h/cpp]
 
-In `matrix.[h/cpp]`, we implement the matrix structure. The gate matrix of common quantum gates are recorded. Related operations, including matrix initialization, tensor-product, addition and multiplication are implemented. 
+In `matrix.[h/cpp]`, we implement the matrix structure. The gate matrices of common quantum gates are recorded in `static map<string, shared_ptr<Matrix>> MatrixDict`. Related operations, including matrix initialization, tensor product, addition and multiplication are implemented. 
 
 The data type of the matrix elements can be set in `matrix.h` as follows. 
 
@@ -21,7 +21,6 @@ The data type of the matrix elements can be set in `matrix.h` as follows.
 > qgate.[h/cpp]
 
 In `qgate.[h/cpp]`, we implement the structure of quantum gates `QGate`, which has four data members, i.e., `gname`, `controlQubits`, `targetQubits`, `gmat`. To save memory footprints, `gmat` is a shared pointer to a global gate matrix map `MatrixDict` defined in `matrix.[h/cpp]`. 
-Some common gate matrices are already initialized. 
 When creating a new gate, we can first add a new gate matrix entry to `MatrixDict` by modifying function `void Matrix<T>::initMatrixDict()`. Then, make the `gmat` member of this new gate point to this entry. 
 
 ### 1.3. Quantum Circuits
@@ -30,7 +29,7 @@ When creating a new gate, we can first add a new gate matrix entry to `MatrixDic
 
 In `qcircuit.[h/cpp]`, we implement the structure of quantum circuits and provide an interface for creating a quantum circuit and adding gates. Please note that $q_0$ represents the low-order (least significant) qubit. 
 
-## 2. Basics of Quantum Circuit Simulation
+## 2. Quantum Circuit Simulations
 
 ### 2.1. Operation Matrix Simulation (OMSim)
 
@@ -112,4 +111,4 @@ $$
 where the strides between these four amplitudes are $2^t$, $2^c-2^t$, and $2^t$. 
 
 
-Since each gate on the circuit requires performing SVSim on the entire state vector, for an $n$-qubit quantum circuit with $T$ levels, the time complexity of SVSim is $O(n \cdot 2^n \cdot T)$, which is still relatively high. 
+Since each gate on the circuit requires performing SVSim on the entire state vector, for an $n$-qubit quantum circuit with $T$ levels, the time complexity of SVSim is $O(n \cdot 2^n \cdot T)$. 

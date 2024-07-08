@@ -9,7 +9,7 @@
  * @param qc a quantum circuit
  * @return Matrix<DTYPE> the operation matrix
  */
-Matrix<DTYPE> OperationMatrixSim(Matrix<DTYPE>& sv, QCircuit& qc);
+Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc);
 
 //
 // Utility functions
@@ -22,6 +22,14 @@ Matrix<DTYPE> OperationMatrixSim(Matrix<DTYPE>& sv, QCircuit& qc);
  * @return Matrix<DTYPE> a complete gate matrix
  */
 Matrix<DTYPE> getCompleteMatrix(QGate& gate);
+
+/**
+ * @brief Generate the gate matrix of a controlled gate
+ *
+ * @param gate the processing gate
+ * @return Matrix<DTYPE> a complete gate matrix
+*/
+Matrix<DTYPE> genControlledGate(QGate& gate);
 
 /**
  * @brief Generate the gate matrix of a swap gate
@@ -39,11 +47,3 @@ Matrix<DTYPE> genSwapGate(QGate& gate);
  * @param gate return value
  */
 void swapRow(ll r1, ll r2, Matrix<DTYPE>& gate);
-
-/**
- * @brief Generate the gate matrix of a control gate
- *
- * @param gate the processing gate
- * @return Matrix<DTYPE> a complete gate matrix
-*/
-Matrix<DTYPE> genControlGate(QGate& gate);

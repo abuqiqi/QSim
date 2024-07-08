@@ -7,26 +7,32 @@
  * @param qc a quantum circuit
  * @return Matrix<DTYPE> the operation matrix
  */
-Matrix<DTYPE> OperationMatrixSim(Matrix<DTYPE>& sv, QCircuit& qc) {
+Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
     Matrix<DTYPE> opmat, levelmat;
     opmat.identity(sv.row);
     levelmat.identity(2);
 
     // calculate the operation matrix of the quantum circuit
     for (int j = 0; j < qc.numDepths; ++ j) {
-
         int qid = qc.numQubits-1;
 
         // get the highest gate matrix
         while (qc.gates[j][qid].isMARK()) {
+            // skip the pseudo placeholder MARK gates placed at control positions
             -- qid;
         }
         if (qid < 0) {
             cout << "[ERROR] Invalid level with no target gate: " << j << endl;
             exit(1);
         }
+        // [TODO] Calculate the operation matrix of level j //////////////////////////
+        // cout << "[TODO] Calculate the operation matrix of level j" << endl;
+        // exit(1);
+        // [TODO] Step 1. Let levelmat be the complete gate matrix of the highest gate
         levelmat = move(getCompleteMatrix(qc.gates[j][qid]));
-
+        // [TODO] Step 2. Get the complete gate matrices of the remaining gates
+        //        Step 2.1. Skip the Mark gates
+        //        Step 2.2. Calculate the tensor product of the gate matrices
         for (int i = qid - 1; i >= 0; -- i) {
             if (qc.gates[j][i].isMARK()) {
                 continue;
@@ -34,10 +40,10 @@ Matrix<DTYPE> OperationMatrixSim(Matrix<DTYPE>& sv, QCircuit& qc) {
             Matrix<DTYPE> tmpmat = move(getCompleteMatrix(qc.gates[j][i]));
             levelmat = move(levelmat.tensorProduct(tmpmat));
         }
-
+        // [TODO] Step 3. Update the operation matrix opmat
         opmat = levelmat * opmat;
     }
-
+    // [TODO] Update the state vector sv
     sv = opmat * sv;
     return opmat;
 }
@@ -49,17 +55,34 @@ Matrix<DTYPE> OperationMatrixSim(Matrix<DTYPE>& sv, QCircuit& qc) {
  * @return Matrix<DTYPE> a complete gate matrix
  */
 Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
-    if (gate.isIDE() || gate.isMARK() || gate.isSingle()) {
+    if (gate.isIDE() || gate.isSingle()) {
         return * gate.gmat;
     }
-    if (gate.gname == "SWAP") {
-        return genSwapGate(gate);
+    if (gate.is2QubitControlled()) {
+        // [TODO] Return the complete matrix of a 2-qubit controlled gate
+        // cout << "[TODO] return the complete matrix of a 2-qubit controlled gate" << endl;
+        // exit(1);
+        return genControlledGate(gate);
     }
-    if (gate.numTargets() == 1) {
-        return genControlGate(gate);
+    if (gate.gname == "SWAP") {
+        // [TODO] Return the complete matrix of a SWAP gate
+        // cout << "[TODO] return the complete matrix of a SWAP gate" << endl;
+        // exit(1);
+        return genSwapGate(gate);
     }
     cout << "[ERROR] getCompleteMatrix: " << gate.gname << " not implemented" << endl;
     exit(1);
+}
+
+/**
+ * @brief Generate the gate matrix of a controlled gate
+ *
+ * @param gate the processing gate
+ * @return Matrix<DTYPE> a complete gate matrix
+*/
+Matrix<DTYPE> genControlledGate(QGate& gate) {
+    cout << "[ERROR] Not implemented" << endl;
+    return Matrix<DTYPE>();
 }
 
 /**
@@ -101,15 +124,4 @@ void swapRow(ll r1, ll r2, Matrix<DTYPE>& gate) {
     memcpy(tmp, gate.data[r1], gate.row * sizeof(DTYPE));
     memcpy(gate.data[r1], gate.data[r2], gate.row * sizeof(DTYPE));
     memcpy(gate.data[r2], tmp, gate.row * sizeof(DTYPE));
-}
-
-/**
- * @brief Generate the gate matrix of a control gate
- *
- * @param gate the processing gate
- * @return Matrix<DTYPE> a complete gate matrix
-*/
-Matrix<DTYPE> genControlGate(QGate& gate) {
-    cout << "[ERROR] Not implemented" << endl;
-    return Matrix<DTYPE>();
 }

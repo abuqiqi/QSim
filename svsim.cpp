@@ -6,7 +6,7 @@
  * @param sv    the initial state vector
  * @param qc    a quantum circuit
  */
-void StateVectorSim(Matrix<DTYPE>& sv, QCircuit& qc) {
+void SVSim(Matrix<DTYPE>& sv, QCircuit& qc) {
     for (int j = 0; j < qc.numDepths; ++ j) {
         for (int qid = 0; qid < qc.numQubits; ++ qid) {
             QGate& gate = qc.gates[j][qid];

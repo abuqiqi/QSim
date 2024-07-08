@@ -8,7 +8,7 @@
  * @param sv the state vector
  * @param qc a quantum circuit
  */
-void StateVectorSim(Matrix<DTYPE>& sv, QCircuit& qc);
+void SVSim(Matrix<DTYPE>& sv, QCircuit& qc);
 
 //
 // Utility functions
