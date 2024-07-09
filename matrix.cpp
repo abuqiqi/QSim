@@ -258,6 +258,19 @@ void Matrix<T>::zero(ll r, ll c) {
     }
 }
 
+// Check if the matrix is a zero matrix
+template<typename T>
+bool Matrix<T>::isZero() const {
+    for (ll i = 0; i < row; ++ i) {
+        for (ll j = 0; j < col; ++ j) {
+            if (data[i][j] != T{0}) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 //
 // Utility functions
 //
