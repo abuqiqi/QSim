@@ -75,14 +75,39 @@ Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
 }
 
 /**
- * @brief Generate the gate matrix of a controlled gate
+ * @brief Generate the gate matrix of a 2-qubit controlled gate
  *
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
 */
 Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
-    cout << "[ERROR] Not implemented" << endl;
-    return Matrix<DTYPE>();
+    int ctrl = gate.controlQubits[0];
+    int targ = gate.targetQubits[0];
+    Matrix<DTYPE> ctrlmat, basismat, IDE;
+    ctrlmat.zero(1 << (abs(ctrl - targ) + 1)); // initialize the complete matrix with all zeros
+    IDE.identity(2);
+    ll mask = ((1 << abs(ctrl - targ)) - 1); // mask the control qubit from qubit[targ+-1] to qubit[ctrl]
+
+    for (ll i = 0; i < (1 << abs(ctrl-targ)); ++ i) {
+        // basis |i> has abs(ctrl-targ) qubits and length (1 << abs(ctrl-targ))
+        basismat.zero(1 << abs(ctrl-targ));
+        basismat.data[i][i] = 1;  // basismat = | i >< i |
+
+        if ((i & mask) == mask) { // control qubit = 1
+            if (ctrl > targ) { // ctrlmat += | i >< i | \otimes gate
+                ctrlmat += basismat.tensorProduct(*gate.gmat);
+            } else { // ctrlmat += gate \otimes | i >< i |
+                ctrlmat += gate.gmat->tensorProduct(basismat);
+            }
+        } else {
+            if (ctrl > targ) { // ctrlmat += | i >< i | \otimes I
+                ctrlmat += basismat.tensorProduct(IDE);
+            } else { // ctrlmat += I \otimes | i >< i |
+                ctrlmat += IDE.tensorProduct(basismat);
+            }
+        }
+    }
+    return ctrlmat;
 }
 
 /**
