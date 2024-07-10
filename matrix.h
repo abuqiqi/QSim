@@ -48,6 +48,7 @@ public:
     // Utility functions
     //
     void print() const; // Print a Matrix
+    void printMatrixDict(); // Print the matrix dictionary
     static void initMatrixDict();
 
     //

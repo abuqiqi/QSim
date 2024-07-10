@@ -293,6 +293,15 @@ void Matrix<T>::print() const {
     }
 }
 
+// Print the matrix dictionary
+template<typename T>
+void Matrix<T>::printMatrixDict() {
+    for (auto it = MatrixDict.begin(); it != MatrixDict.end(); ++ it) {
+        cout << it->first << ": " << endl;
+        it->second->print();
+    }
+}
+
 //
 // Destructor
 //
