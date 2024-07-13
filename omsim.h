@@ -3,7 +3,7 @@
 #include "qcircuit.h"
 
 /**
- * @brief [TODO] Operation matrix simulation of a quantum circuit
+ * @brief [TODO] Conduct operation matrix simulation of a quantum circuit
  * 
  * @param sv the state vector
  * @param qc a quantum circuit

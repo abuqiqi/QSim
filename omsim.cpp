@@ -1,7 +1,7 @@
 #include "omsim.h"
 
 /**
- * @brief Operation matrix simulation of a quantum circuit
+ * @brief [TODO] Conduct operation matrix simulation of a quantum circuit
  * 
  * @param sv the state vector
  * @param qc a quantum circuit
@@ -30,6 +30,8 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
         // exit(1);
         // [TODO] Step 1. Let levelmat be the complete gate matrix of the highest gate
         levelmat = move(getCompleteMatrix(qc.gates[j][qid]));
+        cout << "[DEBUG] highest gate matrix at level [" << j << "]: " << endl;
+        levelmat.print();
         // [TODO] Step 2. Get the complete gate matrices of the remaining gates
         //        Step 2.1. Skip the Mark gates
         //        Step 2.2. Calculate the tensor product of the gate matrices
@@ -40,6 +42,8 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
             Matrix<DTYPE> tmpmat = move(getCompleteMatrix(qc.gates[j][i]));
             levelmat = move(levelmat.tensorProduct(tmpmat));
         }
+        cout << "[DEBUG] levelmat[" << j << "]: " << endl;
+        levelmat.print();
         // [TODO] Step 3. Update the operation matrix opmat
         opmat = levelmat * opmat;
     }
@@ -48,8 +52,12 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
     return opmat;
 }
 
+//
+// Utility functions
+//
+
 /**
- * @brief Get a complete gate matrix according to the applied qubits
+ * @brief [TODO] Get a complete gate matrix according to the applied qubits
  * 
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
@@ -75,7 +83,7 @@ Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
 }
 
 /**
- * @brief Generate the gate matrix of a 2-qubit controlled gate
+ * @brief [TODO] Generate the gate matrix of a controlled gate
  *
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
@@ -84,13 +92,13 @@ Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
     int ctrl = gate.controlQubits[0];
     int targ = gate.targetQubits[0];
     Matrix<DTYPE> ctrlmat, basismat, IDE;
-    ctrlmat.zero(1 << (abs(ctrl - targ) + 1)); // initialize the complete matrix with all zeros
+    ctrlmat.zero(1 << (abs(ctrl - targ) + 1), 1 << (abs(ctrl - targ) + 1)); // initialize the complete matrix with all zeros
     IDE.identity(2);
-    ll mask = ((1 << abs(ctrl - targ)) - 1); // mask the control qubit from qubit[targ+-1] to qubit[ctrl]
+    ll mask = ctrl > targ ? (1 << (ctrl - targ - 1)) : 1; // mask the control qubit from qubit[targ+-1] to qubit[ctrl]
 
     for (ll i = 0; i < (1 << abs(ctrl-targ)); ++ i) {
         // basis |i> has abs(ctrl-targ) qubits and length (1 << abs(ctrl-targ))
-        basismat.zero(1 << abs(ctrl-targ));
+        basismat.zero(1 << abs(ctrl-targ), 1 << abs(ctrl-targ));
         basismat.data[i][i] = 1;  // basismat = | i >< i |
 
         if ((i & mask) == mask) { // control qubit = 1
