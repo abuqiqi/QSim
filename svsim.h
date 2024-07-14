@@ -15,7 +15,7 @@ void SVSim(Matrix<DTYPE>& sv, QCircuit& qc);
 //
 
 /**
- * @brief State vector simulation for a quantum gate
+ * @brief [TODO] State vector simulation for a quantum gate
  * 
  * @param sv   the state vector
  * @param gate the processing gate
@@ -23,10 +23,11 @@ void SVSim(Matrix<DTYPE>& sv, QCircuit& qc);
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
 
 /**
- * @brief Check if the index of a amplitude contains a legal control mask of the gate
+ * @brief [TODO] Check if the index of an amplitude is a legal control pattern of the gate
  * 
  * @param amp  the amplitude index
  * @param gate the processing gate
- * @return int 0: illegal control mask; 1: legal control mask
+ * @return true  amp is a legal control pattern
+ * @return false amp is an illegal control pattern
  */
-int checkControlMask(ll amp, QGate& gate);
+bool isLegalControlPattern(ll ampidx, QGate& gate);
