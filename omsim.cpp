@@ -30,10 +30,9 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
         // exit(1);
         // [TODO] Step 1. Let levelmat be the complete gate matrix of the highest gate
         levelmat = move(getCompleteMatrix(qc.gates[j][qid]));
-        cout << "[DEBUG] highest gate matrix at level [" << j << "]: " << endl;
-        levelmat.print();
+        // ///////////////////////////////////////////////////////////////////////////
         // [TODO] Step 2. Get the complete gate matrices of the remaining gates
-        //        Step 2.1. Skip the Mark gates
+        //        Step 2.1. Skip the MARK gates
         //        Step 2.2. Calculate the tensor product of the gate matrices
         for (int i = qid - 1; i >= 0; -- i) {
             if (qc.gates[j][i].isMARK()) {
@@ -42,12 +41,12 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
             Matrix<DTYPE> tmpmat = move(getCompleteMatrix(qc.gates[j][i]));
             levelmat = move(levelmat.tensorProduct(tmpmat));
         }
-        cout << "[DEBUG] levelmat[" << j << "]: " << endl;
-        levelmat.print();
-        // [TODO] Step 3. Update the operation matrix opmat
+        // ///////////////////////////////////////////////////////////////////////////
+        // [TODO] Step 3. Update the operation matrix opmat for the entire circuit
         opmat = levelmat * opmat;
+        // ///////////////////////////////////////////////////////////////////////////
     }
-    // [TODO] Update the state vector sv
+    // update the state vector sv
     sv = opmat * sv;
     return opmat;
 }
@@ -68,15 +67,17 @@ Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
     }
     if (gate.is2QubitControlled()) {
         // [TODO] Return the complete matrix of a 2-qubit controlled gate
-        // cout << "[TODO] return the complete matrix of a 2-qubit controlled gate" << endl;
+        // cout << "[TODO] Return the complete matrix of a 2-qubit controlled gate" << endl;
         // exit(1);
         return genControlledGateMatrix(gate);
+        // ///////////////////////////////////////////////////////////////////////////
     }
     if (gate.gname == "SWAP") {
         // [TODO] Return the complete matrix of a SWAP gate
-        // cout << "[TODO] return the complete matrix of a SWAP gate" << endl;
+        // cout << "[TODO] Return the complete matrix of a SWAP gate" << endl;
         // exit(1);
         return genSwapGateMatrix(gate);
+        // ///////////////////////////////////////////////////////////////////////////
     }
     cout << "[ERROR] getCompleteMatrix: " << gate.gname << " not implemented" << endl;
     exit(1);
@@ -94,13 +95,20 @@ Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
     Matrix<DTYPE> ctrlmat, basismat, IDE;
     ctrlmat.zero(1 << (abs(ctrl - targ) + 1), 1 << (abs(ctrl - targ) + 1)); // initialize the complete matrix with all zeros
     IDE.identity(2);
-    ll mask = ctrl > targ ? (1 << (ctrl - targ - 1)) : 1; // mask the control qubit from qubit[targ+-1] to qubit[ctrl]
+    ll mask = ctrl > targ ? (1 << (ctrl - targ - 1)) : 1; // mask the control qubit
 
     for (ll i = 0; i < (1 << abs(ctrl-targ)); ++ i) {
-        // basis |i> has abs(ctrl-targ) qubits and length (1 << abs(ctrl-targ))
+        // basismat = | i >< i |
         basismat.zero(1 << abs(ctrl-targ), 1 << abs(ctrl-targ));
-        basismat.data[i][i] = 1;  // basismat = | i >< i |
-
+        basismat.data[i][i] = 1;
+        
+        // [TODO] Calculate the complete gate matrix of a 2-qubit controlled gate
+        // [HINT] Case 1. If ctrl = 1 and ctrl > targ, ctrlmat += | i >< i | \otimes gate
+        //        Case 2. If ctrl = 1 and ctrl < targ, ctrlmat += gate \otimes | i >< i |
+        //        Case 3. If ctrl = 0 and ctrl > targ, ctrlmat += | i >< i | \otimes IDE
+        //        Case 4. If ctrl = 0 and ctrl < targ, ctrlmat += IDE \otimes | i >< i |
+        // cout << "[TODO] Calculate the complete gate matrix of a 2-qubit controlled gate" << endl;
+        // exit(1);
         if ((i & mask) == mask) { // control qubit = 1
             if (ctrl > targ) { // ctrlmat += | i >< i | \otimes gate
                 ctrlmat += basismat.tensorProduct(*gate.gmat);
@@ -108,37 +116,39 @@ Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
                 ctrlmat += gate.gmat->tensorProduct(basismat);
             }
         } else {
-            if (ctrl > targ) { // ctrlmat += | i >< i | \otimes I
+            if (ctrl > targ) { // ctrlmat += | i >< i | \otimes IDE
                 ctrlmat += basismat.tensorProduct(IDE);
-            } else { // ctrlmat += I \otimes | i >< i |
+            } else { // ctrlmat += IDE \otimes | i >< i |
                 ctrlmat += IDE.tensorProduct(basismat);
             }
         }
+        // ///////////////////////////////////////////////////////////////////////////
     }
     return ctrlmat;
 }
 
 /**
- * @brief Generate the gate matrix of a swap gate
+ * @brief Generate the gate matrix of a SWAP gate
  * 
  * @param gate the processing SWAP gate
  * @return Matrix<DTYPE> a complete gate matrix
  */
 Matrix<DTYPE> genSwapGateMatrix(QGate& gate) {
-    int span = abs(gate.targetQubits[0] - gate.targetQubits[1]);
+    // when adding a SWAP, the target qubits are sorted in ascending order
+    int span = gate.targetQubits[1] - gate.targetQubits[0] + 1;
+
     Matrix<DTYPE> mat;
     mat.identity(1 << span);
 
-    ll mask1 = (1 << gate.targetQubits[0]);
-    ll mask2 = (1 << gate.targetQubits[1]);
+    ll mask0 = (1 << (span - 1));
+    ll mask1 = 1;
     ll row;
 
     for (ll i = 0; i < (1 << span); ++ i) {
-        if ((i & mask1) == 0 && (i & mask2) == mask2) {
-            // suppose qid1 > qid2
-            // i   := |..0..1..>
-            // row := |..1..0..>
-            row = i ^ mask1 ^ mask2;
+        if ((i & mask0) == 0 && (i & mask1) == mask1) {
+            // i   := |0..1>
+            // row := |1..0>
+            row = i ^ mask0 ^ mask1;
             swapRow(i, row, mat);
         }
     }
