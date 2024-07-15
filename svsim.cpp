@@ -110,7 +110,7 @@ bool isLegalControlPattern(ll ampidx, QGate& gate) {
         // exit(1);
         ctrl = gate.controlQubits[i];
         ctrlmask = (1 << ctrl);
-        
+
         // suppose a negative ctrl means 0-controlled and a positive ctrl means 1-controlled
         // 0-controlled and the control qubit of amp is 1
         if (ctrl < 0 && (ampidx & ctrlmask) == 1) {

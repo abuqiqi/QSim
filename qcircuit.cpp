@@ -257,3 +257,20 @@ void QCircuit::add_level() {
     gates.push_back(level);
     numDepths ++;
 }
+
+/**
+ * @brief Calculate the number of quantum gates in the circuit
+ * 
+ * @return ll 
+ */
+ll QCircuit::numQGates() {
+    ll numGates = 0;
+    for (int j = 0; j < numDepths; ++ j) {
+        for (int i = 0; i < numQubits; ++ i) {
+            if (! gates[j][i].isIDE() && ! gates[j][i].isMARK()) {
+                numGates ++;
+            }
+        }
+    }
+    return numGates;
+}

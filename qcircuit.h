@@ -38,6 +38,10 @@ public:
     void setDepths(int numDepths_);
     void print();
     void printInfo();
-
     void add_level();
+
+    // 
+    // Utility functions
+    //
+    ll numQGates();
 };
