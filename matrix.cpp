@@ -275,6 +275,12 @@ bool Matrix<T>::isZero() const {
 // Utility functions
 //
 
+// Get the size of the matrix
+template<typename T>
+ll Matrix<T>::getSize() const {
+    return row * col;
+}
+
 // Print the matrix
 template<typename T>
 void Matrix<T>::print() const {
@@ -367,6 +373,25 @@ void Matrix<T>::initMatrixDict() {
                     {0, 0, 0, 1}};
     MatrixDict["SWAP"] = make_shared<Matrix<T>>(4, 4, (T**)swap);
     MatrixDict["CSWAP"] = MatrixDict["SWAP"];
+}
+
+template<typename T>
+ll Matrix<T>::getMatrixDictSize() {
+    ll dictsize = 0;
+    for (auto it = MatrixDict.begin(); it != MatrixDict.end(); ++ it) {
+        dictsize += it->second->getSize();
+    }
+    return dictsize;
+}
+
+template<typename T>
+void Matrix<T>::printMatrixDict() {
+    cout << "[INFO] The number of elements in MatrixDict: [" << getMatrixDictSize() << "]" << endl;
+    for (auto it = MatrixDict.begin(); it != MatrixDict.end(); ++ it) {
+        cout << it->first << endl;
+        // cout << ": " << endl;
+        // it->second->print();
+    }
 }
 
 template class Matrix<DTYPE>;
