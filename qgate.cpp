@@ -4,6 +4,7 @@ QGate::QGate() {
     gname = "NULL";
     controlQubits = {};
     targetQubits = {};
+    params = {};
     gmat = nullptr;
 }
 
@@ -18,6 +19,7 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
+    params = {};
     gmat = Matrix<DTYPE>::MatrixDict[gname];
     if (gmat == nullptr) {
         cout << "[ERROR] Gate " << gname << " not found in MatrixDict" << endl;
@@ -37,11 +39,12 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
-    
+    params = {theta};
+
     string matkey = gname + to_string(theta);
     gmat = Matrix<DTYPE>::MatrixDict[matkey];
     if (gmat != nullptr) { // the gate matrix already exists
-        cout << "[DEBUG] Matrix already exists: " << matkey << ", " << gmat << endl;
+        // cout << "[DEBUG] Matrix already exists: " << matkey << ", " << gmat << endl;
         return;
     }
 
@@ -69,6 +72,7 @@ QGate::QGate(const QGate& other) {
     gname = other.gname;
     controlQubits = other.controlQubits;
     targetQubits = other.targetQubits;
+    params = other.params;
     gmat = other.gmat;
 }
 
@@ -82,6 +86,7 @@ QGate& QGate::operator=(const QGate& other) {
     gname = other.gname;
     controlQubits = other.controlQubits;
     targetQubits = other.targetQubits;
+    params = other.params;
     gmat = other.gmat;
     return *this;
 }
@@ -99,6 +104,15 @@ int QGate::numControls() {
 // Return the number of target qubits of the gate
 int QGate::numTargets() {
     return targetQubits.size();
+}
+
+// Return the key of the gate matrix in the MatrixDict
+string QGate::gmatKey() {
+    string matkey = gname;
+    for (const auto& param : params) {
+        matkey += to_string(param);
+    }
+    return matkey;
 }
 
 // Check if the gate is an identity gate
@@ -135,16 +149,23 @@ bool QGate::isTargetQubit(int qid) {
 void QGate::print() {
     cout << "===== Gate: " << gname << " =====" << endl;
     cout << "Control qubits: ";
-    for (vector<int>::size_type i = 0; i < controlQubits.size(); i++) {
-        cout << controlQubits[i] << " ";
+    for (const auto& ctrl : controlQubits) {
+        cout << ctrl << " ";
     }
     cout << endl;
     cout << "Target qubits: ";
-    for (vector<int>::size_type i = 0; i < targetQubits.size(); i++) {
-        cout << targetQubits[i] << " ";
+    for (const auto& targ : targetQubits) {
+        cout << targ << " ";
     }
     cout << endl;
-    gmat->print();
+    cout << "Parameters: ";
+    for (const auto& param : params) {
+        cout << param << " ";
+    }
+    cout << endl;
+    if (gmat != nullptr)
+        gmat->print();
+    cout << "=====================" << endl;
 }
 
 // Destructor

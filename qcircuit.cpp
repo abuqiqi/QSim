@@ -237,6 +237,7 @@ void QCircuit::print() {
         }
         cout << endl;
     }
+    cout << endl;
 }
 
 /**

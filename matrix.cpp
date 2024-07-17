@@ -299,15 +299,6 @@ void Matrix<T>::print() const {
     }
 }
 
-// Print the matrix dictionary
-template<typename T>
-void Matrix<T>::printMatrixDict() {
-    for (auto it = MatrixDict.begin(); it != MatrixDict.end(); ++ it) {
-        cout << it->first << ": " << endl;
-        it->second->print();
-    }
-}
-
 //
 // Destructor
 //
@@ -379,18 +370,22 @@ template<typename T>
 ll Matrix<T>::getMatrixDictSize() {
     ll dictsize = 0;
     for (auto it = MatrixDict.begin(); it != MatrixDict.end(); ++ it) {
-        dictsize += it->second->getSize();
+        if (it->second != nullptr) {
+            dictsize += it->second->getSize();
+        }
     }
     return dictsize;
 }
 
 template<typename T>
 void Matrix<T>::printMatrixDict() {
-    cout << "[INFO] The number of elements in MatrixDict: [" << getMatrixDictSize() << "]" << endl;
+    // cout << "[INFO] The number of elements in MatrixDict: [" << getMatrixDictSize() << "]" << endl;
     for (auto it = MatrixDict.begin(); it != MatrixDict.end(); ++ it) {
-        cout << it->first << endl;
-        // cout << ": " << endl;
-        // it->second->print();
+        cout.width(13);
+        cout << fixed << it->first << ": " << it->second << endl;
+        // if (it->second != nullptr) {
+        //     it->second->print();
+        // }
     }
 }
 

@@ -49,10 +49,9 @@ public:
     //
     ll getSize() const; // Get the size of the matrix
     void print() const; // Print a Matrix
-    void printMatrixDict(); // Print the matrix dictionary
     static void initMatrixDict();
     static ll getMatrixDictSize(); // Get the number of elements in the matrix dictionary
-    static void printMatrixDict();
+    static void printMatrixDict(); // Print the matrix dictionary
 
     //
     // Destructor
