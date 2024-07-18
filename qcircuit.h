@@ -29,6 +29,9 @@ public:
     void cx(int ctrl, int targ);
     void cy(int ctrl, int targ);
     void cz(int ctrl, int targ);
+    void cs(int ctrl, int targ);
+    void ct(int ctrl, int targ);
+    void crz(double theta, int ctrl, int targ);
     void swap(int qid1, int qid2);
     
     //

@@ -354,6 +354,14 @@ void Matrix<T>::initMatrixDict() {
                  {0, -1}};
     MatrixDict["Z"] = make_shared<Matrix<T>>(2, 2, (T**)z);
 
+    T s[2][2] = {{1, 0},
+                 {0, T(0, 1)}};
+    MatrixDict["S"] = make_shared<Matrix<T>>(2, 2, (T**)s);
+
+    T t[2][2] = {{1, 0},
+                 {0, exp(T(0, 1) * T(acos(-1), 0) / T(4, 0))}};
+    MatrixDict["T"] = make_shared<Matrix<T>>(2, 2, (T**)t);
+
     T swap[4][4] = {{1, 0, 0, 0},
                     {0, 0, 1, 0},
                     {0, 1, 0, 0},
