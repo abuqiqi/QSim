@@ -341,29 +341,24 @@ void Matrix<T>::initMatrixDict() {
     T h[2][2] = {{1.0 / sqrt(2), 1.0 / sqrt(2)},
                  {1.0 / sqrt(2), -1.0 / sqrt(2)}};
     MatrixDict["H"] = make_shared<Matrix<T>>(2, 2, (T**)h);
-    MatrixDict["CH"] = MatrixDict["H"];
 
     T x[2][2] = {{0, 1},
                  {1, 0}};
     MatrixDict["X"] = make_shared<Matrix<T>>(2, 2, (T**)x);
-    MatrixDict["CX"] = MatrixDict["X"];
 
     T y[2][2] = {{0, -T(0, 1)},
                  {T(0, 1), 0}};
     MatrixDict["Y"] = make_shared<Matrix<T>>(2, 2, (T**)y);
-    MatrixDict["CY"] = MatrixDict["Y"];
 
     T z[2][2] = {{1, 0},
                  {0, -1}};
     MatrixDict["Z"] = make_shared<Matrix<T>>(2, 2, (T**)z);
-    MatrixDict["CZ"] = MatrixDict["Z"];
 
     T swap[4][4] = {{1, 0, 0, 0},
                     {0, 0, 1, 0},
                     {0, 1, 0, 0},
                     {0, 0, 0, 1}};
     MatrixDict["SWAP"] = make_shared<Matrix<T>>(4, 4, (T**)swap);
-    MatrixDict["CSWAP"] = MatrixDict["SWAP"];
 }
 
 template<typename T>

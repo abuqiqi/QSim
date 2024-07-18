@@ -127,7 +127,7 @@ void QCircuit::cx(int ctrl, int targ) {
     for (int i = start; i <= end; ++ i) {
         gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
     }
-    gates[numDepths-1][targ] = QGate("CX", {ctrl}, {targ});
+    gates[numDepths-1][targ] = QGate("X", {ctrl}, {targ});
 }
 
 /**
@@ -148,7 +148,7 @@ void QCircuit::cy(int ctrl, int targ) {
     for (int i = start; i <= end; ++i) {
         gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
     }
-    gates[numDepths-1][targ] = QGate("CY", {ctrl}, {targ});
+    gates[numDepths-1][targ] = QGate("Y", {ctrl}, {targ});
 }
 
 /**
@@ -169,7 +169,7 @@ void QCircuit::cz(int ctrl, int targ) {
     for (int i = start; i <= end; ++i) {
         gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
     }
-    gates[numDepths-1][targ] = QGate("CZ", {ctrl}, {targ});
+    gates[numDepths-1][targ] = QGate("Z", {ctrl}, {targ});
 }
 
 /**
@@ -191,6 +191,28 @@ void QCircuit::swap(int qid1, int qid2) {
         gates[numDepths-1][i] = QGate("MARK", {}, {start, end});
     }
     gates[numDepths-1][end] = QGate("SWAP", {}, {start, end});
+}
+
+/**
+ * @brief Apply a controlled-Z gate with multiple control qubits
+ * 
+ * @param ctrls 
+ * @param targs 
+ */
+void QCircuit::ccz(vector<int> ctrls, int targ) {
+    sort(ctrls.begin(), ctrls.end());
+    int start = ctrls[0] < targ ? ctrls[0] : targ;
+    int end = ctrls[ctrls.size()-1] > targ ? ctrls[ctrls.size()-1] : targ;
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
+    for (int i = start; i <= end; ++ i) {
+        gates[numDepths-1][i] = QGate("MARK", ctrls, {targ});
+    }
+    gates[numDepths-1][targ] = QGate("Z", ctrls, {targ});
 }
 
 /**

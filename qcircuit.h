@@ -30,6 +30,11 @@ public:
     void cy(int ctrl, int targ);
     void cz(int ctrl, int targ);
     void swap(int qid1, int qid2);
+    
+    //
+    // multi-qubit gates
+    //
+    void ccz(vector<int> ctrls, int targ);
 
     //
     // Other operations on quantum circuits
