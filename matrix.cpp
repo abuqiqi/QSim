@@ -228,6 +228,23 @@ void Matrix<T>::rotationZ(double theta) {
     }
 }
 
+// U1 gate
+template<typename T>
+void Matrix<T>::u1(double lambda) {
+    T u1[2][2] = {{1, 0},
+                  {0, exp(T(0, 1) * lambda)}};
+    clear();
+    row = 2;
+    col = 2;
+    data = new T*[2];
+    for (ll i = 0; i < 2; i++) {
+        data[i] = new T[2];
+        for (ll j = 0; j < 2; j++) {
+            data[i][j] = u1[i][j];
+        }
+    }
+}
+
 // Set the matrix to be an identity matrix
 template<typename T>
 void Matrix<T>::identity(ll r) {

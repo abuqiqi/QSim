@@ -22,6 +22,7 @@ public:
     void rx(double theta, int qid);
     void ry(double theta, int qid);
     void rz(double theta, int qid);
+    void u1(double lambda, int qid);
 
     //
     // 2-qubit gates
@@ -32,6 +33,7 @@ public:
     void cs(int ctrl, int targ);
     void ct(int ctrl, int targ);
     void crz(double theta, int ctrl, int targ);
+    void cu1(double lambda, int ctrl, int targ);
     void swap(int qid1, int qid2);
     
     //

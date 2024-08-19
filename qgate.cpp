@@ -55,6 +55,8 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
         mat.rotationY(theta);
     } else if (gname == "RZ") {
         mat.rotationZ(theta);
+    } else if (gname == "U1") {
+        mat.u1(theta);
     } else {
         cout << "[ERROR] Gate " << gname << " not implemented" << endl;
         exit(1);

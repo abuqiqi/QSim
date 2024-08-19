@@ -38,6 +38,7 @@ public:
     void rotationX(double theta); // Rotation X gate matrix
     void rotationY(double theta); // Rotation Y gate matrix
     void rotationZ(double theta); // Rotation Z gate matrix
+    void u1(double lambda); // U1 gate matrix
 
     void identity(ll r); // Set the matrix to be an identity matrix
     void zero(ll r, ll c); // Set the matrix to be a zero matrix

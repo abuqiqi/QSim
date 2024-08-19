@@ -69,7 +69,7 @@ void QCircuit::z(int qid) {
 /**
  * @brief Apply an RX gate to qubit[qid]
  * 
- * @param param the gate parameter
+ * @param theta the gate parameter
  * @param qid   qubit id
  */
 void QCircuit::rx(double theta, int qid) {
@@ -82,7 +82,7 @@ void QCircuit::rx(double theta, int qid) {
 /**
  * @brief Apply an RY gate to qubit[qid]
  * 
- * @param param the gate parameter
+ * @param theta the gate parameter
  * @param qid   qubit id
  */
 void QCircuit::ry(double theta, int qid) {
@@ -95,7 +95,7 @@ void QCircuit::ry(double theta, int qid) {
 /**
  * @brief Apply an RZ gate to qubit[qid]
  * 
- * @param param the gate parameter
+ * @param theta the gate parameter
  * @param qid   qubit id
  */
 void QCircuit::rz(double theta, int qid) {
@@ -103,6 +103,19 @@ void QCircuit::rz(double theta, int qid) {
         add_level();
     }
     gates[numDepths-1][qid] = QGate("RZ", {}, {qid}, theta);
+}
+
+/**
+ * @brief Apply a U1 gate to qubit[qid]
+ * 
+ * @param lambda the gate parameter
+ * @param qid    qubit id
+ */
+void QCircuit::u1(double lambda, int qid) {
+    if (! gates[numDepths-1][qid].isIDE()) {
+        add_level();
+    }
+    gates[numDepths-1][qid] = QGate("U1", {}, {qid}, lambda);
 }
 
 // 
@@ -215,6 +228,21 @@ void QCircuit::crz(double theta, int ctrl, int targ) {
         gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("RZ", {ctrl}, {targ}, theta);
+}
+
+void QCircuit::cu1(double lambda, int ctrl, int targ) {
+    int start = min(ctrl, targ);
+    int end = max(ctrl, targ);
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
+    for (int i = start; i <= end; ++i) {
+        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+    }
+    gates[numDepths-1][targ] = QGate("U1", {ctrl}, {targ}, lambda);
 }
 
 /**
