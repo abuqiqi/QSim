@@ -66,6 +66,22 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
 }
 
 /**
+ * @brief Construct a new QGate::QGate object with a given matrix
+ * 
+ * @param gname_ the gate name
+ * @param controls_ control qubits
+ * @param targets_ target qubits
+ * @param mat the gate matrix
+ */
+QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<DTYPE>& mat) {
+    gname = gname_;
+    controlQubits = controls_;
+    targetQubits = targets_;
+    params = {};
+    gmat = make_shared<Matrix<DTYPE>>(move(mat));
+}
+
+/**
  * @brief Copy construct a new QGate::QGate object
  * 
  * @param other 

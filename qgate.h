@@ -13,6 +13,7 @@ public:
     QGate();
     QGate(string gname_, vector<int> controls_, vector<int> targets_);
     QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta);
+    QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<DTYPE>& mat);
     QGate(const QGate& other);
 
     QGate& operator=(const QGate& other);

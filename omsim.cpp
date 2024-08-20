@@ -62,7 +62,7 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
  * @return Matrix<DTYPE> a complete gate matrix
  */
 Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
-    if (gate.isIDE() || gate.isSingle()) {
+    if (gate.isMARK() || gate.isIDE() || gate.isSingle()) {
         return * gate.gmat;
     }
     if (gate.is2QubitControlled()) {
@@ -101,7 +101,7 @@ Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
         // basismat = | i >< i |
         basismat.zero(1 << abs(ctrl-targ), 1 << abs(ctrl-targ));
         basismat.data[i][i] = 1;
-        
+
         // [TODO] Calculate the complete gate matrix of a 2-qubit controlled gate
         // [HINT] Case 1. If ctrl = 1 and ctrl > targ, ctrlmat += | i >< i | \otimes gate
         //        Case 2. If ctrl = 1 and ctrl < targ, ctrlmat += gate \otimes | i >< i |

@@ -15,7 +15,7 @@ void SVSim(Matrix<DTYPE>& sv, QCircuit& qc);
 //
 
 /**
- * @brief [TODO] State vector simulation for a quantum gate
+ * @brief State vector simulation for a quantum gate
  * 
  * @param sv   the state vector
  * @param gate the processing gate
@@ -23,7 +23,7 @@ void SVSim(Matrix<DTYPE>& sv, QCircuit& qc);
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
 
 /**
- * @brief [TODO] Check if the index of an amplitude is a legal control pattern of the gate
+ * @brief Check if the index of an amplitude is a legal control pattern of the gate
  * 
  * @param ampidx the amplitude index
  * @param gate the processing gate

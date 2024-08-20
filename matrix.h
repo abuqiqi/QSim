@@ -44,12 +44,12 @@ public:
     void zero(ll r, ll c); // Set the matrix to be a zero matrix
 
     bool isZero() const; // Check if the matrix is a zero matrix
-    
+
     //
     // Utility functions
     //
     ll getSize() const; // Get the size of the matrix
-    void print() const; // Print a Matrix
+    void print(string fname = "") const; // Print a Matrix
     static void initMatrixDict();
     static ll getMatrixDictSize(); // Get the number of elements in the matrix dictionary
     static void printMatrixDict(); // Print the matrix dictionary

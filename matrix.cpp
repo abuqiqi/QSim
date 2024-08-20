@@ -300,19 +300,36 @@ ll Matrix<T>::getSize() const {
 
 // Print the matrix
 template<typename T>
-void Matrix<T>::print() const {
-    cout << "----- Matrix: [" << row << "] * [" << col << "] -----" << endl;
-    cout.setf(std::ios::left);
+void Matrix<T>::print(string fname) const {
+    ostream* out;
+    ofstream file;
+
+    if (fname.empty()) {
+        out = &cout;
+    } else {
+        file.open(fname);
+        if (!file.is_open()) {
+            cerr << "[ERROR] Cannot open " << fname << endl;
+            exit(1);
+        }
+        out = &file;
+    }
+
+    *out << "----- Matrix: [" << row << "] * [" << col << "] -----" << endl;
+    out -> setf(std::ios::left);
     if (data == nullptr) {
-        cout << "Matrix is Empty!" << endl;
+        *out << "Matrix is Empty!" << endl;
     } else {
         for (ll i = 0; i < row; i++) {
             for (ll j = 0; j < col; j++) {
-                cout.width(13);
-                cout << fixed << setprecision(2) << data[i][j];
+                out -> width(13);
+                *out << fixed << setprecision(2) << data[i][j];
             }
-            cout << endl;
+            *out << endl;
         }
+    }
+    if (file.is_open()) {
+        file.close();
     }
 }
 
@@ -334,8 +351,8 @@ map<string, shared_ptr<Matrix<T>>> Matrix<T>::MatrixDict; // A global matrix dic
 
 template<typename T>
 void Matrix<T>::initMatrixDict() {
-    T mark[1][1] = {{1}}; // placeholder
-    MatrixDict["MARK"] = make_shared<Matrix<T>>(1, 1, (T**)mark);
+    // T mark[1][1] = {{1}}; // placeholder
+    // MatrixDict["MARK"] = make_shared<Matrix<T>>(1, 1, (T**)mark);
 
     // T zeros[2][1] = {{1}, {0}};
     // MatrixDict["ZEROS"] = make_shared<Matrix<T>>(2, 1, (T**)zeros);
@@ -354,6 +371,7 @@ void Matrix<T>::initMatrixDict() {
     T ide[2][2] = {{1, 0},
                    {0, 1}};
     MatrixDict["IDE"] = make_shared<Matrix<T>>(2, 2, (T**)ide);
+    MatrixDict["MARK"] = MatrixDict["IDE"];
 
     T h[2][2] = {{1.0 / sqrt(2), 1.0 / sqrt(2)},
                  {1.0 / sqrt(2), -1.0 / sqrt(2)}};

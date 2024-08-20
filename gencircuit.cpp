@@ -2,12 +2,13 @@
 
 QCircuit test() {
     // test circuit
-    QCircuit qc(3, "test");
+    QCircuit qc(6, "test");
     qc.x(0);
     qc.cx(1, 2);
-    qc.h(1);
-    qc.cx(1, 0);
-    qc.cx(1, 2);
+    qc.swap(3, 4);
+    qc.h(5);
+    // qc.cx(1, 0);
+    // qc.cx(1, 2);
     qc.print();
     return qc;
 }
@@ -108,21 +109,25 @@ QCircuit QAOA(int numQubits) {
  * 
  * @return a quantum circuit
  */
-QCircuit Grover(int numQubits) {
+QCircuit Grover(int numQubits, int k) {
     QCircuit qc(numQubits, "Grover");
 
     for (int i = 0; i < numQubits; ++ i) {
         qc.h(i);
     }
 
-    int numIterations = floor(std::acos(-1.0) / 4 * sqrt(pow(2, numQubits)));
+    int numIterations = floor(std::acos(-1.0) / 4 * sqrt(pow(2, numQubits) / pow(2, k)));
 
-    vector<int> controlQubits;
-    for (int i = 0; i < numQubits-1; ++ i)
+    vector<int> oracle, controlQubits;
+    for (int i = 0; i < numQubits-k-1; ++ i) {
+        oracle.push_back(i);
+    }
+    for (int i = 0; i < numQubits-1; ++ i) {
         controlQubits.push_back(i);
+    }
 
     for (int itr = 0; itr < numIterations; ++ itr) {
-        qc.ccz(controlQubits, numQubits-1);
+        qc.ccz(oracle, numQubits-k-1); // oracle
         qc.barrier();
         for (int i = 0; i < numQubits; ++ i) {
             qc.h(i);
