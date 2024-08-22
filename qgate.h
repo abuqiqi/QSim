@@ -22,10 +22,12 @@ public:
     int numControls(); // the number of control qubits of the gate
     int numTargets(); // the number of target qubits of the gate
     string gmatKey(); // the key of the gate matrix in the MatrixDict
+    shared_ptr<Matrix<DTYPE>> getFullMatrix(); // the full gate matrix for a controlled gate
 
     bool isIDE();  // check if the gate is an identity gate
     bool isMARK(); // check if the gate is a placeholder gate
     bool isSingle(); // check if the gate is a single-qubit gate
+    bool isControlled(); // check if the gate is a controlled gate
     bool is2QubitControlled(); // check if the gate is a 2-qubit controlled gate
 
     bool isControlQubit(int qid); // check if qubit[qid] is a control qubit of the gate

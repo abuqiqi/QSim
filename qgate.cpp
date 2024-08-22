@@ -78,7 +78,11 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<
     controlQubits = controls_;
     targetQubits = targets_;
     params = {};
-    gmat = make_shared<Matrix<DTYPE>>(move(mat));
+    gmat = Matrix<DTYPE>::MatrixDict[gname];
+    if (gmat == nullptr) {
+        Matrix<DTYPE>::MatrixDict[gname] = make_shared<Matrix<DTYPE>>(move(mat));
+        gmat = Matrix<DTYPE>::MatrixDict[gname];
+    }
 }
 
 /**
@@ -133,6 +137,39 @@ string QGate::gmatKey() {
     return matkey;
 }
 
+// Get the full gate matrix for a controlled gate
+shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
+    if (is2QubitControlled()) { // generate a 2-qubit controlled gate's matrix
+        string matkey = gmatKey();
+        shared_ptr<Matrix<DTYPE>> fullmat;
+        if (controlQubits[0] > targetQubits[0]) { // CU gate
+            matkey = "C" + matkey;
+            fullmat = Matrix<DTYPE>::MatrixDict[matkey];
+            if (fullmat == nullptr) { // insert a new entry to the MatrixDict
+                Matrix<DTYPE> mat.identity(2);
+                mat = mat.tensorProduct(*gmat);
+                Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
+                fullmat = Matrix<DTYPE>::MatrixDict[matkey];
+            }
+        } else { // UC gate
+            matkey = matkey + "C";
+            fullmat = Matrix<DTYPE>::MatrixDict[matkey];
+            if (fullmat == nullptr) {
+                // insert a new entry to the MatrixDict
+                Matrix<DTYPE> mat.identity(2);
+                mat = gmat->tensorProduct(mat);
+                Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
+                fullmat = Matrix<DTYPE>::MatrixDict[matkey];
+            }
+        }
+        return fullmat;
+    } else if (isControlled()) { // generate a controlled gate's matrix
+        cout << "[TODO] Generate the full matrix of a controlled gate for state vector simulation." << endl;
+        exit(1);
+    }
+    return gmat;
+}
+
 // Check if the gate is an identity gate
 bool QGate::isIDE() {
     return gname == "IDE";
@@ -146,6 +183,11 @@ bool QGate::isMARK() {
 // Check if the gate is a single-qubit gate
 bool QGate::isSingle() {
     return gname != "IDE" && gname != "MARK" && controlQubits.size() == 0 && targetQubits.size() == 1;
+}
+
+// Check if the gate is a controlled gate
+bool QGate::isControlled() {
+    return gname != "MARK" && controlQubits.size() > 0;
 }
 
 // Check if the gate is a 2-qubit controlled gate
