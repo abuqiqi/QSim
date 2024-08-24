@@ -9,7 +9,7 @@ public:
     vector<int> targetQubits; // the target qubits of the gate
     vector<double> params; // the parameters of the gate
     shared_ptr<Matrix<DTYPE>> gmat; // the gate matrix
-    
+
     QGate();
     QGate(string gname_, vector<int> controls_, vector<int> targets_);
     QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta);
@@ -18,6 +18,7 @@ public:
 
     QGate& operator=(const QGate& other);
 
+    vector<int> qubits(); // the qubits of the gate
     int numQubits(); // the number of input/output qubits of the gate
     int numControls(); // the number of control qubits of the gate
     int numTargets(); // the number of target qubits of the gate

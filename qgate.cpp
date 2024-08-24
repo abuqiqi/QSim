@@ -113,6 +113,14 @@ QGate& QGate::operator=(const QGate& other) {
     return *this;
 }
 
+// Return the qubits of the gate
+vector<int> QGate::qubits() {
+    vector<int> qubits = controlQubits;
+    qubits.insert(qubits.end(), targetQubits.begin(), targetQubits.end());
+    sort(qubits.begin(), qubits.end());
+    return qubits;
+}
+
 // Return the number of input/output qubits of the gate
 int QGate::numQubits() {
     return controlQubits.size() + targetQubits.size();
