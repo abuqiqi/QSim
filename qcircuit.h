@@ -35,7 +35,7 @@ public:
     void crz(double theta, int ctrl, int targ);
     void cu1(double lambda, int ctrl, int targ);
     void swap(int qid1, int qid2);
-    
+
     //
     // multi-qubit gates
     //
@@ -46,6 +46,7 @@ public:
     //
     void barrier();
     void setDepths(int numDepths_);
+    void applyGates(const vector<QGate>& gateSeq);
     void print();
     void printInfo();
     void add_level();

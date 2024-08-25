@@ -8,7 +8,7 @@
 // Quantum circuit generators
 //
 
-QCircuit test();
+QCircuit test(int numQubits);
 QCircuit QFT(int numQubits);
 QCircuit QFT_Quirk(int numQubits);
 QCircuit QAOA(int numQubits);

@@ -1,15 +1,20 @@
 #include "omsim.h"
 
+Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
+    Matrix<DTYPE> opmat = getOperationMatrix(qc);
+    sv = opmat * sv;
+    return opmat;
+}
+
 /**
- * @brief [TODO] Conduct operation matrix simulation of a quantum circuit
+ * @brief Construct the operation matrix of a quantum circuit
  * 
- * @param sv the state vector
  * @param qc a quantum circuit
  * @return Matrix<DTYPE> the operation matrix
  */
-Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
+Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
     Matrix<DTYPE> opmat, levelmat;
-    opmat.identity(sv.row);
+    opmat.identity(1 << qc.numQubits);
     levelmat.identity(2);
 
     // calculate the operation matrix of the quantum circuit
@@ -25,15 +30,13 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
             cout << "[ERROR] Invalid level with no target gate: " << j << endl;
             exit(1);
         }
-        // [TODO] Calculate the operation matrix of level j //////////////////////////
-        // cout << "[TODO] Calculate the operation matrix of level j" << endl;
-        // exit(1);
-        // [TODO] Step 1. Let levelmat be the complete gate matrix of the highest gate
+        // Calculate the operation matrix of level j //////////////////////////
+        // Step 1. Let levelmat be the complete gate matrix of the highest gate
         levelmat = move(getCompleteMatrix(qc.gates[j][qid]));
         // ///////////////////////////////////////////////////////////////////////////
-        // [TODO] Step 2. Get the complete gate matrices of the remaining gates
-        //        Step 2.1. Skip the MARK gates
-        //        Step 2.2. Calculate the tensor product of the gate matrices
+        // Step 2. Get the complete gate matrices of the remaining gates
+        //      Step 2.1. Skip the MARK gates
+        //      Step 2.2. Calculate the tensor product of the gate matrices
         for (int i = qid - 1; i >= 0; -- i) {
             if (qc.gates[j][i].isMARK()) {
                 continue;
@@ -42,12 +45,10 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
             levelmat = move(levelmat.tensorProduct(tmpmat));
         }
         // ///////////////////////////////////////////////////////////////////////////
-        // [TODO] Step 3. Update the operation matrix opmat for the entire circuit
+        // Step 3. Update the operation matrix opmat for the entire circuit
         opmat = levelmat * opmat;
         // ///////////////////////////////////////////////////////////////////////////
     }
-    // update the state vector sv
-    sv = opmat * sv;
     return opmat;
 }
 

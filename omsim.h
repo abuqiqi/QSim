@@ -3,7 +3,7 @@
 #include "qcircuit.h"
 
 /**
- * @brief [TODO] Conduct operation matrix simulation of a quantum circuit
+ * @brief Conduct operation matrix simulation of a quantum circuit
  * 
  * @param sv the state vector
  * @param qc a quantum circuit
@@ -11,12 +11,14 @@
  */
 Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc);
 
+Matrix<DTYPE> getOperationMatrix(QCircuit& qc);
+
 //
 // Utility functions
 //
 
 /**
- * @brief [TODO] Get a complete gate matrix according to the applied qubits
+ * @brief Get a complete gate matrix according to the applied qubits
  * 
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
@@ -24,7 +26,7 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc);
 Matrix<DTYPE> getCompleteMatrix(QGate& gate);
 
 /**
- * @brief [TODO] Generate the gate matrix of a controlled gate
+ * @brief Generate the gate matrix of a controlled gate
  *
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix

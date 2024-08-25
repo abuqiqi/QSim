@@ -1,14 +1,20 @@
 #include "gencircuit.h"
 
-QCircuit test() {
+QCircuit test(int numQubits) {
     // test circuit
-    QCircuit qc(6, "test");
-    qc.x(0);
-    qc.cx(1, 2);
-    qc.swap(3, 4);
-    qc.h(5);
-    // qc.cx(1, 0);
-    // qc.cx(1, 2);
+    QCircuit qc(numQubits, "test");
+    for (int i = 0; i < numQubits; ++ i) {
+        qc.h(i);
+    }
+    for (int i = 0; i < numQubits - 1; ++ i) {
+        qc.cx(i, i+1);
+    }
+    // for (int i = 0; i < numQubits; ++ i) {
+    //     qc.h(i);
+    // }
+    // for (int i = 0; i < numQubits - 1; ++ i) {
+    //     qc.cx(i, i+1);
+    // }
     qc.print();
     return qc;
 }

@@ -154,7 +154,8 @@ shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
             matkey = "C" + matkey;
             fullmat = Matrix<DTYPE>::MatrixDict[matkey];
             if (fullmat == nullptr) { // insert a new entry to the MatrixDict
-                Matrix<DTYPE> mat.identity(2);
+                Matrix<DTYPE> mat;
+                mat.identity(2);
                 mat = mat.tensorProduct(*gmat);
                 Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
                 fullmat = Matrix<DTYPE>::MatrixDict[matkey];
@@ -164,7 +165,8 @@ shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
             fullmat = Matrix<DTYPE>::MatrixDict[matkey];
             if (fullmat == nullptr) {
                 // insert a new entry to the MatrixDict
-                Matrix<DTYPE> mat.identity(2);
+                Matrix<DTYPE> mat;
+                mat.identity(2);
                 mat = gmat->tensorProduct(mat);
                 Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
                 fullmat = Matrix<DTYPE>::MatrixDict[matkey];
