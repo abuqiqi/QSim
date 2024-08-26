@@ -312,43 +312,21 @@ void QCircuit::setDepths(int numDepths_) {
  * 
  * @param gateSeq  the sequence of quantum gates
  */
-void QCircuit::applyGates(const vector<QGate>& gateSeq) {
+void QCircuit::applyGates(vector<QGate>& gateSeq) {
     for (auto& gate : gateSeq) {
-        if (gate.gname == "H") {
-            h(gate.targetQubits[0]);
-        } else if (gate.gname == "X") {
-            x(gate.targetQubits[0]);
-        } else if (gate.gname == "Y") {
-            y(gate.targetQubits[0]);
-        } else if (gate.gname == "Z") {
-            z(gate.targetQubits[0]);
-        } else if (gate.gname == "RX") {
-            rx(gate.params[0], gate.targetQubits[0]);
-        } else if (gate.gname == "RY") {
-            ry(gate.params[0], gate.targetQubits[0]);
-        } else if (gate.gname == "RZ") {
-            rz(gate.params[0], gate.targetQubits[0]);
-        } else if (gate.gname == "U1") {
-            u1(gate.params[0], gate.targetQubits[0]);
-        } else if (gate.gname == "CX") {
-            cx(gate.controlQubits[0], gate.targetQubits[0]);
-        } else if (gate.gname == "CY") {
-            cy(gate.controlQubits[0], gate.targetQubits[0]);
-        } else if (gate.gname == "CZ") {
-            cz(gate.controlQubits[0], gate.targetQubits[0]);
-        } else if (gate.gname == "CS") {
-            cs(gate.controlQubits[0], gate.targetQubits[0]);
-        } else if (gate.gname == "CT") {
-            ct(gate.controlQubits[0], gate.targetQubits[0]);
-        } else if (gate.gname == "CRZ") {
-            crz(gate.params[0], gate.controlQubits[0], gate.targetQubits[0]);
-        } else if (gate.gname == "CU1") {
-            cu1(gate.params[0], gate.controlQubits[0], gate.targetQubits[0]);
-        } else if (gate.gname == "SWAP") {
-            swap(gate.targetQubits[0], gate.targetQubits[1]);
-        } else if (gate.gname == "CCZ") {
-            ccz(gate.controlQubits, gate.targetQubits[0]);
+        for (auto& qid : gate.qubits()) {
+            if (! gates[numDepths-1][qid].isIDE()) {
+                add_level();
+                break;
+            }
         }
+        int start = gate.qubits()[0];
+        int end = gate.qubits()[gate.qubits().size()-1];
+        for (int i = start; i <= end; ++ i) {
+            gates[numDepths-1][i] = QGate("MARK", gate.controlQubits, gate.targetQubits);
+        }
+        int targ = gate.targetQubits[gate.targetQubits.size()-1]; // the highest target qubit
+        gates[numDepths-1][targ] = QGate(gate.gname, gate.controlQubits, gate.targetQubits, *gate.gmat);
     }
 }
 

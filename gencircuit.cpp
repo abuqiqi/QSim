@@ -6,15 +6,16 @@ QCircuit test(int numQubits) {
     for (int i = 0; i < numQubits; ++ i) {
         qc.h(i);
     }
+    for (int i = 0; i < numQubits; ++ i) {
+        qc.h(i);
+    }
+    qc.swap(0, 1);
     for (int i = 0; i < numQubits - 1; ++ i) {
         qc.cx(i, i+1);
     }
-    // for (int i = 0; i < numQubits; ++ i) {
-    //     qc.h(i);
-    // }
-    // for (int i = 0; i < numQubits - 1; ++ i) {
-    //     qc.cx(i, i+1);
-    // }
+    for (int i = 0; i < numQubits - 1; ++ i) {
+        qc.cx(i, i+1);
+    }
     qc.print();
     return qc;
 }

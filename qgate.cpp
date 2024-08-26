@@ -148,26 +148,34 @@ string QGate::gmatKey() {
 // Get the full gate matrix for a controlled gate
 shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
     if (is2QubitControlled()) { // generate a 2-qubit controlled gate's matrix
+        cout << "[DEBUG] is2QubitControlled" << endl;
         string matkey = gmatKey();
         shared_ptr<Matrix<DTYPE>> fullmat;
         if (controlQubits[0] > targetQubits[0]) { // CU gate
             matkey = "C" + matkey;
             fullmat = Matrix<DTYPE>::MatrixDict[matkey];
             if (fullmat == nullptr) { // insert a new entry to the MatrixDict
-                Matrix<DTYPE> mat;
-                mat.identity(2);
-                mat = mat.tensorProduct(*gmat);
+                Matrix<DTYPE> mat(4, 4);
+                Matrix<DTYPE> basismat(2, 2);
+                basismat.data[0][0] = 1;
+                mat = basismat.tensorProduct(*Matrix<DTYPE>::MatrixDict["IDE"]);
+                basismat.data[0][0] = 0;
+                basismat.data[1][1] = 1;
+                mat += basismat.tensorProduct(*gmat);
                 Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
                 fullmat = Matrix<DTYPE>::MatrixDict[matkey];
             }
         } else { // UC gate
             matkey = matkey + "C";
             fullmat = Matrix<DTYPE>::MatrixDict[matkey];
-            if (fullmat == nullptr) {
-                // insert a new entry to the MatrixDict
-                Matrix<DTYPE> mat;
-                mat.identity(2);
-                mat = gmat->tensorProduct(mat);
+            if (fullmat == nullptr) { // insert a new entry to the MatrixDict
+                Matrix<DTYPE> mat(4, 4);
+                Matrix<DTYPE> basismat(2, 2);
+                basismat.data[0][0] = 1;
+                mat = Matrix<DTYPE>::MatrixDict["IDE"]->tensorProduct(basismat);
+                basismat.data[0][0] = 0;
+                basismat.data[1][1] = 1;
+                mat += gmat->tensorProduct(basismat);
                 Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
                 fullmat = Matrix<DTYPE>::MatrixDict[matkey];
             }
@@ -175,6 +183,10 @@ shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
         return fullmat;
     } else if (isControlled()) { // generate a controlled gate's matrix
         cout << "[TODO] Generate the full matrix of a controlled gate for state vector simulation." << endl;
+        exit(1);
+    }
+    if (gmat == nullptr) {
+        cout << "[ERROR] Gate " << gname << " not found in MatrixDict" << endl;
         exit(1);
     }
     return gmat;

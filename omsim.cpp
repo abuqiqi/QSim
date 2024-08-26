@@ -57,35 +57,30 @@ Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
 //
 
 /**
- * @brief [TODO] Get a complete gate matrix according to the applied qubits
+ * @brief Get a complete gate matrix according to the applied qubits
  * 
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
  */
 Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
-    if (gate.isMARK() || gate.isIDE() || gate.isSingle()) {
-        return * gate.gmat;
-    }
+    // if (gate.isMARK() || gate.isIDE() || gate.isSingle()) {
+    //     return * gate.gmat;
+    // }
     if (gate.is2QubitControlled()) {
-        // [TODO] Return the complete matrix of a 2-qubit controlled gate
-        // cout << "[TODO] Return the complete matrix of a 2-qubit controlled gate" << endl;
-        // exit(1);
+        // Return the complete matrix of a 2-qubit controlled gate
         return genControlledGateMatrix(gate);
-        // ///////////////////////////////////////////////////////////////////////////
     }
     if (gate.gname == "SWAP") {
-        // [TODO] Return the complete matrix of a SWAP gate
-        // cout << "[TODO] Return the complete matrix of a SWAP gate" << endl;
-        // exit(1);
+        // Return the complete matrix of a SWAP gate
         return genSwapGateMatrix(gate);
-        // ///////////////////////////////////////////////////////////////////////////
     }
-    cout << "[ERROR] getCompleteMatrix: " << gate.gname << " not implemented" << endl;
-    exit(1);
+    return * gate.gmat;
+    // cout << "[ERROR] getCompleteMatrix: " << gate.gname << " not implemented" << endl;
+    // exit(1);
 }
 
 /**
- * @brief [TODO] Generate the gate matrix of a controlled gate
+ * @brief Generate the gate matrix of a controlled gate
  *
  * @param gate the processing gate
  * @return Matrix<DTYPE> a complete gate matrix
@@ -103,13 +98,11 @@ Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
         basismat.zero(1 << abs(ctrl-targ), 1 << abs(ctrl-targ));
         basismat.data[i][i] = 1;
 
-        // [TODO] Calculate the complete gate matrix of a 2-qubit controlled gate
-        // [HINT] Case 1. If ctrl = 1 and ctrl > targ, ctrlmat += | i >< i | \otimes gate
-        //        Case 2. If ctrl = 1 and ctrl < targ, ctrlmat += gate \otimes | i >< i |
-        //        Case 3. If ctrl = 0 and ctrl > targ, ctrlmat += | i >< i | \otimes IDE
-        //        Case 4. If ctrl = 0 and ctrl < targ, ctrlmat += IDE \otimes | i >< i |
-        // cout << "[TODO] Calculate the complete gate matrix of a 2-qubit controlled gate" << endl;
-        // exit(1);
+        // Calculate the complete gate matrix of a 2-qubit controlled gate
+        //  Case 1. If ctrl = 1 and ctrl > targ, ctrlmat += | i >< i | \otimes gate
+        //  Case 2. If ctrl = 1 and ctrl < targ, ctrlmat += gate \otimes | i >< i |
+        //  Case 3. If ctrl = 0 and ctrl > targ, ctrlmat += | i >< i | \otimes IDE
+        //  Case 4. If ctrl = 0 and ctrl < targ, ctrlmat += IDE \otimes | i >< i |
         if ((i & mask) == mask) { // control qubit = 1
             if (ctrl > targ) { // ctrlmat += | i >< i | \otimes gate
                 ctrlmat += basismat.tensorProduct(*gate.gmat);
@@ -123,7 +116,6 @@ Matrix<DTYPE> genControlledGateMatrix(QGate& gate) {
                 ctrlmat += IDE.tensorProduct(basismat);
             }
         }
-        // ///////////////////////////////////////////////////////////////////////////
     }
     return ctrlmat;
 }

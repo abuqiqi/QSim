@@ -46,7 +46,7 @@ public:
     //
     void barrier();
     void setDepths(int numDepths_);
-    void applyGates(const vector<QGate>& gateSeq);
+    void applyGates(vector<QGate>& gateSeq);
     void print();
     void printInfo();
     void add_level();
