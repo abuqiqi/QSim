@@ -2,32 +2,61 @@
 
 QCircuit test(int numQubits) {
     // test circuit
-    QCircuit qc(numQubits, "test");
-    for (int i = 0; i < numQubits; ++ i) {
-        qc.h(i);
-    }
-    for (int i = 0; i < numQubits; ++ i) {
-        qc.h(i);
-    }
-    qc.swap(0, 1);
-    for (int i = 0; i < numQubits - 1; ++ i) {
-        qc.cx(i, i+1);
-    }
-    for (int i = 0; i < numQubits - 1; ++ i) {
-        qc.cx(i, i+1);
-    }
+    QCircuit qc(2, "test");
+    qc.h(0);
+    qc.x(0);
+    qc.cx(1, 0);
+    qc.h(0);
+    qc.x(0);
+    qc.h(1);
+    qc.x(1);
     qc.print();
     return qc;
 }
 
 QCircuit QFT(int numQubits) {
     QCircuit qc(numQubits, "QFT");
+    for (int i = numQubits - 1; i >= numQubits / 2; -- i) {
+        qc.h(i);
+    }
     for (int i = numQubits - 1; i >= 0; -- i) {
         qc.h(i);
         for (int j = i - 1; j >= 0; -- j) {
             int k = i - j + 1;
             qc.cu1(2 * acos(-1.0) / pow(2, k), j, i);
         }
+    }
+    qc.print();
+    return qc;
+}
+
+QCircuit Adder(int numQubits) {
+    QCircuit qc(numQubits, "Adder");
+    // QFT
+    for (int i = numQubits/2; i < numQubits; ++ i) {
+        qc.h(i);
+        for (int j = i+1; j < numQubits; ++ j) {
+            int k = j - i + 1;
+            qc.cu1(2 * acos(-1.0) / pow(2, k), j, i);
+        }
+    }
+    // addition
+    for (int i = 0; i < numQubits/2; ++ i) {
+        int targ = i + numQubits/2;
+        int k = 0;
+        for (int j = i; j < numQubits/2; ++ j) {
+            ++ k;
+            qc.cu1(2 * acos(-1.0) / pow(2, k), j, targ);
+        }
+    }
+    // QFT^(-1)
+    qc.h(numQubits-1);
+    for (int i = numQubits-2; i > numQubits/2-1; -- i) {
+        for (int j = numQubits-1; j > i; -- j) {
+            int k = j - i + 1;
+            qc.cu1(-2 * acos(-1.0) / pow(2, k), j, i);
+        }
+        qc.h(i);
     }
     qc.print();
     return qc;

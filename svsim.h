@@ -9,6 +9,7 @@
  * @param qc a quantum circuit
  */
 void SVSim(Matrix<DTYPE>& sv, QCircuit& qc);
+void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq);
 
 //
 // Utility functions

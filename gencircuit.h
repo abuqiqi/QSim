@@ -11,6 +11,7 @@
 QCircuit test(int numQubits);
 QCircuit QFT(int numQubits);
 QCircuit QFT_Quirk(int numQubits);
+QCircuit Adder(int numQubits);
 QCircuit QAOA(int numQubits);
 QCircuit Grover(int numQubits, int k);
 QCircuit VQC(int numQubits);

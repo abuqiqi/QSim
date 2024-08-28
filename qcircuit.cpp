@@ -326,7 +326,11 @@ void QCircuit::applyGates(vector<QGate>& gateSeq) {
             gates[numDepths-1][i] = QGate("MARK", gate.controlQubits, gate.targetQubits);
         }
         int targ = gate.targetQubits[gate.targetQubits.size()-1]; // the highest target qubit
-        gates[numDepths-1][targ] = QGate(gate.gname, gate.controlQubits, gate.targetQubits, *gate.gmat);
+        if (gate.params.size() > 0) {
+            gates[numDepths-1][targ] = QGate(gate.gname, gate.controlQubits, gate.targetQubits, gate.params[0]);
+        } else {
+            gates[numDepths-1][targ] = QGate(gate.gname, gate.controlQubits, gate.targetQubits, *gate.gmat);
+        }
     }
 }
 

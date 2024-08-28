@@ -17,6 +17,7 @@ public:
     QGate(const QGate& other);
 
     QGate& operator=(const QGate& other);
+    bool operator==(const QGate& other) const;
 
     vector<int> qubits(); // the qubits of the gate
     int numQubits(); // the number of input/output qubits of the gate
@@ -30,11 +31,13 @@ public:
     bool isSingle(); // check if the gate is a single-qubit gate
     bool isControlled(); // check if the gate is a controlled gate
     bool is2QubitControlled(); // check if the gate is a 2-qubit controlled gate
+    bool isHermitian(); // check if the gate is hermitian
 
     bool isControlQubit(int qid); // check if qubit[qid] is a control qubit of the gate
     bool isTargetQubit(int qid); // check if qubit[qid] is a target qubit of the gate
 
-    void print(); // print the gate information
+    void printInfo(); // print the gate information
+    void print(); // print the gate information and gate matrix
 
     ~QGate();
 };

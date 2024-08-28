@@ -85,11 +85,7 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<
     }
 }
 
-/**
- * @brief Copy construct a new QGate::QGate object
- * 
- * @param other 
- */
+// Copy construct a new QGate::QGate object
 QGate::QGate(const QGate& other) {
     gname = other.gname;
     controlQubits = other.controlQubits;
@@ -98,12 +94,7 @@ QGate::QGate(const QGate& other) {
     gmat = other.gmat;
 }
 
-/**
- * @brief Copy assignment
- * 
- * @param other 
- * @return QGate& 
- */
+// Copy assignment
 QGate& QGate::operator=(const QGate& other) {
     gname = other.gname;
     controlQubits = other.controlQubits;
@@ -111,6 +102,11 @@ QGate& QGate::operator=(const QGate& other) {
     params = other.params;
     gmat = other.gmat;
     return *this;
+}
+
+// Compare two gates
+bool QGate::operator==(const QGate& other) const {
+    return gname == other.gname && controlQubits == other.controlQubits && targetQubits == other.targetQubits && params == other.params;
 }
 
 // Return the qubits of the gate
@@ -217,6 +213,11 @@ bool QGate::is2QubitControlled() {
     return gname != "MARK" && controlQubits.size() == 1 && targetQubits.size() == 1;
 }
 
+// Check if the gate is hermitian
+bool QGate::isHermitian() {
+    return gname == "X" || gname == "Y" || gname == "Z" || gname == "H" || gname == "SWAP";
+}
+
 // Check if qubit[qid] is a control qubit of the gate
 bool QGate::isControlQubit(int qid) {
     return find(controlQubits.begin(), controlQubits.end(), qid) != controlQubits.end();
@@ -228,7 +229,7 @@ bool QGate::isTargetQubit(int qid) {
 }
 
 // Print the gate information
-void QGate::print() {
+void QGate::printInfo() {
     cout << "===== Gate: " << gname << " =====" << endl;
     cout << "Control qubits: ";
     for (const auto& ctrl : controlQubits) {
@@ -245,6 +246,12 @@ void QGate::print() {
         cout << param << " ";
     }
     cout << endl;
+    cout << "=====================" << endl;
+}
+
+// Print the gate information and gate matrix
+void QGate::print() {
+    printInfo();
     if (gmat != nullptr)
         gmat->print();
     cout << "=====================" << endl;

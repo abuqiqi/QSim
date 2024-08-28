@@ -147,6 +147,8 @@ template<typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T>& matrx) const {
     if (col != matrx.row) {
         cout << "[ERROR] Matrix *: col != matrx.row. " << endl;
+        this->print();
+        matrx.print();
         exit(1);
     }
     Matrix<T> temp(row, matrx.col);
@@ -421,9 +423,9 @@ void Matrix<T>::printMatrixDict() {
     for (auto it = MatrixDict.begin(); it != MatrixDict.end(); ++ it) {
         cout.width(13);
         cout << fixed << it->first << ": " << it->second << endl;
-        // if (it->second != nullptr) {
-        //     it->second->print();
-        // }
+        if (it->second != nullptr) {
+            it->second->print();
+        }
     }
 }
 

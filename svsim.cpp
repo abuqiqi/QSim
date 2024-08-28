@@ -13,13 +13,25 @@ void SVSim(Matrix<DTYPE>& sv, QCircuit& qc) {
             if (gate.isIDE() || gate.isMARK()) {
                 continue;
             }
+            // cout << "[DEBUG] Processing gate: " << gate.gname << endl;
             svsimForGate(sv, gate);
         }
     }
 }
 
+void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq) {
+    for (auto& gate : gateSeq) {
+        if (gate.isIDE() || gate.isMARK()) {
+            continue;
+        }
+        // cout << "[DEBUG] Processing gate: " << gate.gname << endl;
+        // gate.printInfo();
+        svsimForGate(sv, gate);
+    }
+}
+
 /**
- * @brief [TODO] State vector simulation for a quantum gate
+ * @brief State vector simulation for a quantum gate
  * 
  * @param sv    the state vector
  * @param gate  the processing gate
@@ -31,7 +43,7 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
     ll numAmps = (1 << gate.numTargets()); // the number of amplitudes involved in matrix-vector multiplication
     Matrix<DTYPE> amps_vec(numAmps, 1); // save the involved amplitudes
 
-    // [TODO] 1. Calculate the strides for the involved amplitudes
+    // 1. Calculate the strides for the involved amplitudes
     /*  <e.g.>
         (1) If there is only one target qubit, two amplitudes are involved. 
             If the target qubit is q[k], strides = {0, 2^k}. 
@@ -47,8 +59,6 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
         (3) If there are 'gate.numTargets()' target qubits, there are 'numAmps' amplitudes. 
     */
     vector<ll> strides;
-    // cout << "[TODO] Calculate the strides for the involved amplitudes." << endl;
-    // exit(1);
     for (ll idx = 0; idx < numAmps; ++ idx) {
         ll stride = 0;
         for (int j = 0; j < gate.numTargets(); ++ j) {
@@ -58,16 +68,13 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
         }
         strides.push_back(stride);
     }
-    // ///////////////////////////////////////////////////////////
 
     // 2. Iterate over all amplitudes
     for (ll ampidx = 0; ampidx < sv.row; ++ ampidx) {
         // 2.1. Skip the amplitude if it is already accessed
         if (isAccessed[ampidx]) continue;
 
-        // [TODO] 2.2. Save the involved amplitudes to amps_vec and mark them as accessed
-        // cout << "[TODO] Save the involved amplitudes to amps_vec and mark them as accessed." << endl;
-        // exit(1);
+        // 2.2. Save the involved amplitudes to amps_vec and mark them as accessed
         for (ll idx = 0; idx < numAmps; ++ idx) {
             if (ampidx + strides[idx] >= sv.row) {
                 cout << "[ERROR] Exceed the length of the state vector." << endl;
@@ -76,7 +83,6 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
             amps_vec.data[idx][0] = sv.data[ampidx + strides[idx]][0];
             isAccessed[ampidx + strides[idx]] = true;
         }
-        // ///////////////////////////////////////////////////////////
 
         // 3. Check the control bits of the current amplitude
         //    If the control bits are not satisfied, skip this amplitude group
