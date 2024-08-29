@@ -55,4 +55,5 @@ public:
     // Utility functions
     //
     ll numQGates();
+    string cmatkey();
 };

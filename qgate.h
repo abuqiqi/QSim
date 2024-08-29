@@ -32,6 +32,7 @@ public:
     bool isControlled(); // check if the gate is a controlled gate
     bool is2QubitControlled(); // check if the gate is a 2-qubit controlled gate
     bool isHermitian(); // check if the gate is hermitian
+    bool isPhase(); // check if the gate is a phase gate
 
     bool isControlQubit(int qid); // check if qubit[qid] is a control qubit of the gate
     bool isTargetQubit(int qid); // check if qubit[qid] is a target qubit of the gate

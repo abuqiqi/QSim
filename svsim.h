@@ -22,6 +22,10 @@ void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq);
  * @param gate the processing gate
  */
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
+void applyPhase(Matrix<DTYPE>& sv, QGate& gate);
+void apply1Targ(Matrix<DTYPE>& sv, QGate& gate);
+void applySwap(Matrix<DTYPE>& sv, QGate& gate);
+void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate);
 
 /**
  * @brief Check if the index of an amplitude is a legal control pattern of the gate

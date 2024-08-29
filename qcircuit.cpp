@@ -397,3 +397,16 @@ ll QCircuit::numQGates() {
     }
     return numGates;
 }
+
+string QCircuit::cmatkey() {
+    string key = "";
+    for (int i = 0; i < numQubits; ++ i) {
+        if (i > 0) {
+            key += "|";
+        }
+        for (int j = 0; j < numDepths; ++ j) {
+            key += gates[j][i].gmatKey();
+        }
+    }
+    return key;
+}

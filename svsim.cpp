@@ -37,9 +37,68 @@ void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq) {
  * @param gate  the processing gate
  */
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
+    if (gate.isPhase()) {
+        applyPhase(sv, gate);
+    } else if (gate.numTargets() == 1) {
+        apply1Targ(sv, gate);
+    } else if (gate.gname == "SWAP") {
+        applySwap(sv, gate);
+    } else {
+        applyMultiTargs(sv, gate);
+    }
+}
+
+void applyPhase(Matrix<DTYPE>& sv, QGate& gate) {
+    DTYPE phase = gate.gmat->data[gate.gmat->row-1][gate.gmat->col-1];
+    ll pattern = 0; // pattern: ...11...1...
+    for (int i = 0; i < gate.numQubits(); ++ i) {
+        pattern |= (1 << gate.qubits()[i]);
+    }
+    for (ll i = 0; i < sv.row; ++ i) {
+        if ((i & pattern) == pattern) {
+            sv.data[i][0] *= phase;
+        }
+    }
+}
+
+void apply1Targ(Matrix<DTYPE>& sv, QGate& gate) {
+    int qid = gate.targetQubits[0];
+#pragma omp parallel for collapse(2)
+    for (ll i = 0; i < sv.row; i += (1<<(qid+1))) {
+        for (ll j = 0; j < (1<<qid); ++ j) {
+            auto p = i | j;
+            if (! isLegalControlPattern(p, gate))
+                continue;
+            auto q0 = sv.data[p][0];
+            auto q1 = sv.data[p|(1<<qid)][0];
+            sv.data[p][0] = gate.gmat->data[0][0] * q0 + gate.gmat->data[0][1] * q1;
+            sv.data[p|(1<<qid)][0] = gate.gmat->data[1][0] * q0 + gate.gmat->data[1][1] * q1;
+        }
+    }
+}
+
+void applySwap(Matrix<DTYPE>& sv, QGate& gate) {
+    int q0 = gate.targetQubits[0];
+    int q1 = gate.targetQubits[1];
+#pragma omp parallel for collapse(3)
+    for (ll i = 0; i < sv.row; i += (1<<(q1+1))) {
+        for (ll j = 0; j < (1<<q1); j += (1<<(q0+1))) {
+            for (ll k = 0; k < (1<<q0); ++ k) {
+                auto p = i | j | k;
+                if (! isLegalControlPattern(p, gate))
+                    continue;
+                auto amp1 = sv.data[p|(1<<q0)][0];
+                sv.data[p|(1<<q0)][0] = sv.data[p|(1<<q1)][0];
+                sv.data[p|(1<<q1)][0] = amp1;
+            }
+        }
+    }
+}
+
+void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
     bool isAccessed[sv.row];
     memset(isAccessed, 0, sv.row*sizeof(bool));
-    
+
     ll numAmps = (1 << gate.numTargets()); // the number of amplitudes involved in matrix-vector multiplication
     Matrix<DTYPE> amps_vec(numAmps, 1); // save the involved amplitudes
 
@@ -99,7 +158,7 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
 }
 
 /**
- * @brief [TODO] Check if the index of an amplitude is a legal control pattern of the gate
+ * @brief Check if the index of an amplitude is a legal control pattern of the gate
  * 
  * @param ampidx the amplitude index
  * @param gate the processing gate
@@ -110,10 +169,8 @@ bool isLegalControlPattern(ll ampidx, QGate& gate) {
     int ctrl;
     ll ctrlmask = 0;
     for (int i = 0; i < gate.numControls(); ++ i) {
-        // [TODO] Check the control qubits of the gate ////////////////
+        // Check the control qubits of the gate ////////////////
         // [HINT] If the i-th bit of amp is 0 and q_i is a |1> control qubit of gate, return false. 
-        // cout << "[TODO] Check the control qubits of the gate." << endl;
-        // exit(1);
         ctrl = gate.controlQubits[i];
         ctrlmask = (1 << ctrl);
 
@@ -127,7 +184,6 @@ bool isLegalControlPattern(ll ampidx, QGate& gate) {
         if (ctrl >= 0 && (ampidx & ctrlmask) == 0) {
             return false;
         }
-        // ///////////////////////////////////////////////////////////
     }
     return true;
 }

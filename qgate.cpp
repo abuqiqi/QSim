@@ -218,6 +218,11 @@ bool QGate::isHermitian() {
     return gname == "X" || gname == "Y" || gname == "Z" || gname == "H" || gname == "SWAP";
 }
 
+// Check if the gate is a phase gate
+bool QGate::isPhase() {
+    return gname == "Z" || gname == "S" || gname == "T" || gname == "U1";
+}
+
 // Check if qubit[qid] is a control qubit of the gate
 bool QGate::isControlQubit(int qid) {
     return find(controlQubits.begin(), controlQubits.end(), qid) != controlQubits.end();
