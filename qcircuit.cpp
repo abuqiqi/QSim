@@ -381,6 +381,13 @@ void QCircuit::add_level() {
     numDepths ++;
 }
 
+// Clear all gates in the circuit
+void QCircuit::clear() {
+    gates.clear();
+    numDepths = 0;
+    add_level(); // numDepths += 1
+}
+
 /**
  * @brief Calculate the number of quantum gates in the circuit
  * 

@@ -50,6 +50,7 @@ public:
     void print();
     void printInfo();
     void add_level();
+    void clear();
 
     // 
     // Utility functions
