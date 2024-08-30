@@ -157,6 +157,59 @@ void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
     }
 }
 
+void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
+    // 定义复数类型
+    using Complex = std::complex<double>;
+    using StateVector = std::vector<Complex>;
+
+    // 施加在k个量子比特上的门
+    void applyGate(StateVector& state, const std::vector<int>& qubits, const std::vector<std::vector<Complex>>& gate) {
+        int n = state.size();  // 状态向量的大小 (2^n)
+        int num_qubits = qubits.size(); // 操作的量子比特数量
+        int subspace_dim = 1 << num_qubits; // 子空间维度 2^k
+
+        // 遍历所有可能的状态
+        for (int i = 0; i < n; ++i) {
+            // 跳过不在目标子空间的索引
+            bool skip = false;
+            for (int q : qubits) {
+                if ((i & (1 << q)) == 0) {
+                    skip = true;
+                    break;
+                }
+            }
+            if (skip) continue;
+
+            // 计算对应的状态索引
+            std::vector<int> indices(subspace_dim);
+            for (int j = 0; j < subspace_dim; ++j) {
+                int idx = i;
+                for (int q = 0; q < num_qubits; ++q) {
+                    if ((j & (1 << q)) != 0) {
+                        idx |= (1 << qubits[q]);
+                    } else {
+                        idx &= ~(1 << qubits[q]);
+                    }
+                }
+                indices[j] = idx;
+            }
+
+            // 创建新的状态向量
+            std::vector<Complex> new_state(subspace_dim, 0);
+            for (int j = 0; j < subspace_dim; ++j) {
+                for (int k = 0; k < subspace_dim; ++k) {
+                    new_state[j] += gate[j][k] * state[indices[k]];
+                }
+            }
+
+            // 更新状态向量
+            for (int j = 0; j < subspace_dim; ++j) {
+                state[indices[j]] = new_state[j];
+            }
+        }
+    }
+}
+
 /**
  * @brief Check if the index of an amplitude is a legal control pattern of the gate
  * 
