@@ -162,6 +162,32 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& matrx) const {
     return temp;
 }
 
+template<typename T>
+vector<T> Matrix<T>::operator*(const vector<T>& vec) const {
+    if ((size_t)col != vec.size()) {
+        cout << "[ERROR] Matrix * vector: col != vec.size(). " << endl;
+        exit(1);
+    }
+    vector<T> temp(row, 0);
+    for (ll i = 0; i < row; i++) {
+        for (ll j = 0; j < col; j++) {
+            temp[i] += data[i][j] * vec[j];
+        }
+    }
+    return temp;
+}
+
+template<typename T>
+Matrix<T> Matrix<T>::operator*(const T& scalar) const {
+    Matrix<T> temp(row, col);
+    for (ll i = 0; i < row; i++) {
+        for (ll j = 0; j < col; j++) {
+            temp.data[i][j] = data[i][j] * scalar;
+        }
+    }
+    return temp;
+}
+
 // Tensor product C = A tensorProduct B
 template<typename T>
 Matrix<T> Matrix<T>::tensorProduct(const Matrix<T>& matrx) const {

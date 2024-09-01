@@ -1,5 +1,6 @@
 #pragma once
 
+#include <omp.h>
 #include "qcircuit.h"
 
 /**
@@ -25,6 +26,10 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
 void applyPhase(Matrix<DTYPE>& sv, QGate& gate);
 void apply1Targ(Matrix<DTYPE>& sv, QGate& gate);
 void applySwap(Matrix<DTYPE>& sv, QGate& gate);
+void apply2Targs(Matrix<DTYPE>& sv, QGate& gate);
+void apply3Targs(Matrix<DTYPE>& sv, QGate& gate);
+void apply4Targs(Matrix<DTYPE>& sv, QGate& gate);
+void apply5Targs(Matrix<DTYPE>& sv, QGate& gate);
 void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate);
 
 /**

@@ -1,5 +1,30 @@
 #include "gencircuit.h"
 
+vector<QGate> testkqubits(int numQubits, int k) {
+    QCircuit subqc(k, "subqc");
+    vector<int> targs;
+    for (int i = 0; i < k; ++ i) {
+        subqc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        targs.push_back(i);
+    }
+    // subqc.print();
+    Matrix<DTYPE> subU = getOperationMatrix(subqc);
+    QGate kqubitgate(subqc.cmatkey(), {}, targs, subU);
+    // kqubitgate.print();
+
+    vector<QGate> gateSeq;
+    for (int i = 0; i < 120 / k; ++ i) {
+        gateSeq.push_back(kqubitgate);
+    }
+    return gateSeq;
+
+    // QCircuit qc(numQubits, to_string(k)+"-qubit");
+    // qc.applyGates(gateSeq);
+
+    // // qc.print();
+    // return qc;
+}
+
 QCircuit test(int numQubits) {
     // test circuit
     QCircuit qc(2, "test");
