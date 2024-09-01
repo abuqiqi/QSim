@@ -43,9 +43,18 @@ void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
         apply1Targ(sv, gate);
     } else if (gate.gname == "SWAP") {
         applySwap(sv, gate);
+    } else if (gate.numTargets() == 2) {
+        apply2Targs(sv, gate);
+    } else if (gate.numTargets() == 3) {
+        apply3Targs(sv, gate);
+    } else if (gate.numTargets() == 4) {
+        apply4Targs(sv, gate);
+    } else if (gate.numTargets() == 5) {
+        apply5Targs(sv, gate);
     } else {
         applyMultiTargs(sv, gate);
     }
+    // applyMultiTargs(sv, gate);
 }
 
 void applyPhase(Matrix<DTYPE>& sv, QGate& gate) {
@@ -95,117 +104,297 @@ void applySwap(Matrix<DTYPE>& sv, QGate& gate) {
     }
 }
 
-void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
-    bool isAccessed[sv.row];
-    memset(isAccessed, 0, sv.row*sizeof(bool));
+void apply2Targs(Matrix<DTYPE>& sv, QGate& gate) {
+    int q0 = gate.targetQubits[0];
+    int q1 = gate.targetQubits[1];
+#pragma omp parallel for collapse(3)
+    for (ll i = 0; i < sv.row; i += (1<<(q1+1))) {
+        for (ll j = 0; j < (1<<q1); j += (1<<(q0+1))) {
+            for (ll k = 0; k < (1<<q0); ++ k) {
+                auto p = i | j | k;
+                if (! isLegalControlPattern(p, gate))
+                    continue;
+                auto q00 = sv.data[p][0];
+                auto q01 = sv.data[p|(1<<q0)][0];
+                auto q10 = sv.data[p|(1<<q1)][0];
+                auto q11 = sv.data[p|(1<<q0)|(1<<q1)][0];
+                sv.data[p][0] = gate.gmat->data[0][0] * q00 + gate.gmat->data[0][1] * q01 + gate.gmat->data[0][2] * q10 + gate.gmat->data[0][3] * q11;
+                sv.data[p|(1<<q0)][0] = gate.gmat->data[1][0] * q00 + gate.gmat->data[1][1] * q01 + gate.gmat->data[1][2] * q10 + gate.gmat->data[1][3] * q11;
+                sv.data[p|(1<<q1)][0] = gate.gmat->data[2][0] * q00 + gate.gmat->data[2][1] * q01 + gate.gmat->data[2][2] * q10 + gate.gmat->data[2][3] * q11;
+                sv.data[p|(1<<q0)|(1<<q1)][0] = gate.gmat->data[3][0] * q00 + gate.gmat->data[3][1] * q01 + gate.gmat->data[3][2] * q10 + gate.gmat->data[3][3] * q11;
+            }
+        }
+    }
+}
 
-    ll numAmps = (1 << gate.numTargets()); // the number of amplitudes involved in matrix-vector multiplication
-    Matrix<DTYPE> amps_vec(numAmps, 1); // save the involved amplitudes
+void apply3Targs(Matrix<DTYPE>& sv, QGate& gate) {
+    int q0 = gate.targetQubits[0];
+    int q1 = gate.targetQubits[1];
+    int q2 = gate.targetQubits[2];
+#pragma omp parallel for collapse(4)
+    for (ll i = 0; i < sv.row; i += (1<<(q2+1))) {
+        for (ll j = 0; j < (1<<q2); j += (1<<(q1+1))) {
+            for (ll k = 0; k < (1<<q1); k += (1<<(q0+1))) {
+                for (ll l = 0; l < (1<<q0); ++ l) {
+                    auto p = i | j | k | l;
+                    if (! isLegalControlPattern(p, gate))
+                        continue;
+                    auto q000 = sv.data[p][0];
+                    auto q001 = sv.data[p|(1<<q0)][0];
+                    auto q010 = sv.data[p|(1<<q1)][0];
+                    auto q011 = sv.data[p|(1<<q0)|(1<<q1)][0];
+                    auto q100 = sv.data[p|(1<<q2)][0];
+                    auto q101 = sv.data[p|(1<<q0)|(1<<q2)][0];
+                    auto q110 = sv.data[p|(1<<q1)|(1<<q2)][0];
+                    auto q111 = sv.data[p|(1<<q0)|(1<<q1)|(1<<q2)][0];
+                    sv.data[p][0] = gate.gmat->data[0][0] * q000 + gate.gmat->data[0][1] * q001 + gate.gmat->data[0][2] * q010 + gate.gmat->data[0][3] * q011 + gate.gmat->data[0][4] * q100 + gate.gmat->data[0][5] * q101 + gate.gmat->data[0][6] * q110 + gate.gmat->data[0][7] * q111;
+                    sv.data[p|(1<<q0)][0] = gate.gmat->data[1][0] * q000 + gate.gmat->data[1][1] * q001 + gate.gmat->data[1][2] * q010 + gate.gmat->data[1][3] * q011 + gate.gmat->data[1][4] * q100 + gate.gmat->data[1][5] * q101 + gate.gmat->data[1][6] * q110 + gate.gmat->data[1][7] * q111;
+                    sv.data[p|(1<<q1)][0] = gate.gmat->data[2][0] * q000 + gate.gmat->data[2][1] * q001 + gate.gmat->data[2][2] * q010 + gate.gmat->data[2][3] * q011 + gate.gmat->data[2][4] * q100 + gate.gmat->data[2][5] * q101 + gate.gmat->data[2][6] * q110 + gate.gmat->data[2][7] * q111;
+                    sv.data[p|(1<<q0)|(1<<q1)][0] = gate.gmat->data[3][0] * q000 + gate.gmat->data[3][1] * q001 + gate.gmat->data[3][2] * q010 + gate.gmat->data[3][3] * q011 + gate.gmat->data[3][4] * q100 + gate.gmat->data[3][5] * q101 + gate.gmat->data[3][6] * q110 + gate.gmat->data[3][7] * q111;
+                    sv.data[p|(1<<q2)][0] = gate.gmat->data[4][0] * q000 + gate.gmat->data[4][1] * q001 + gate.gmat->data[4][2] * q010 + gate.gmat->data[4][3] * q011 + gate.gmat->data[4][4] * q100 + gate.gmat->data[4][5] * q101 + gate.gmat->data[4][6] * q110 + gate.gmat->data[4][7] * q111;
+                    sv.data[p|(1<<q0)|(1<<q2)][0] = gate.gmat->data[5][0] * q000 + gate.gmat->data[5][1] * q001 + gate.gmat->data[5][2] * q010 + gate.gmat->data[5][3] * q011 + gate.gmat->data[5][4] * q100 + gate.gmat->data[5][5] * q101 + gate.gmat->data[5][6] * q110 + gate.gmat->data[5][7] * q111;
+                    sv.data[p|(1<<q1)|(1<<q2)][0] = gate.gmat->data[6][0] * q000 + gate.gmat->data[6][1] * q001 + gate.gmat->data[6][2] * q010 + gate.gmat->data[6][3] * q011 + gate.gmat->data[6][4] * q100 + gate.gmat->data[6][5] * q101 + gate.gmat->data[6][6] * q110 + gate.gmat->data[6][7] * q111;
+                    sv.data[p|(1<<q0)|(1<<q1)|(1<<q2)][0] = gate.gmat->data[7][0] * q000 + gate.gmat->data[7][1] * q001 + gate.gmat->data[7][2] * q010 + gate.gmat->data[7][3] * q011 + gate.gmat->data[7][4] * q100 + gate.gmat->data[7][5] * q101 + gate.gmat->data[7][6] * q110 + gate.gmat->data[7][7] * q111;
+                }
+            }
+        }
+    }
+}
+
+void apply4Targs(Matrix<DTYPE>& sv, QGate& gate) {
+    int q0 = gate.targetQubits[0];
+    int q1 = gate.targetQubits[1];
+    int q2 = gate.targetQubits[2];
+    int q3 = gate.targetQubits[3];
+
+    vector<ll> masks;
+    int numAmps = 16;
+    masks.push_back(0);
+    masks.push_back(1<<q0);
+    masks.push_back(1<<q1);
+    masks.push_back((1<<q0)|(1<<q1));
+    masks.push_back(1<<q2);
+    masks.push_back((1<<q0)|(1<<q2));
+    masks.push_back((1<<q1)|(1<<q2));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q2));
+    masks.push_back(1<<q3);
+    masks.push_back((1<<q0)|(1<<q3));
+    masks.push_back((1<<q1)|(1<<q3));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q3));
+    masks.push_back((1<<q2)|(1<<q3));
+    masks.push_back((1<<q0)|(1<<q2)|(1<<q3));
+    masks.push_back((1<<q1)|(1<<q2)|(1<<q3));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q3));
+
+#pragma omp parallel for collapse(5)
+    for (ll i = 0; i < sv.row; i += (1<<(q3+1))) {
+        for (ll j = 0; j < (1<<q3); j += (1<<(q2+1))) {
+            for (ll k = 0; k < (1<<q2); k += (1<<(q1+1))) {
+                for (ll l = 0; l < (1<<q1); l += (1<<(q0+1))) {
+                    for (ll m = 0; m < (1<<q0); ++m) {
+                        auto p = i | j | k | l | m;
+                        if (!isLegalControlPattern(p, gate))
+                            continue;
+                        vector<DTYPE> amps_vec(numAmps); // save the involved amplitudes
+                        for (int idx = 0; idx < numAmps; ++ idx) {
+                            amps_vec[idx] = sv.data[p | masks[idx]][0];
+                        }
+                        // amps_vec = (*gate.gmat) * amps_vec;
+                        for (int i = 0; i < numAmps; ++ i) {
+                            for (int j = 0; j < numAmps; ++ j) {
+                                amps_vec[i] += gate.gmat->data[i][j] * amps_vec[j];
+                            }
+                        }
+                        for (ll idx = 0; idx < numAmps; ++ idx) {
+                            sv.data[p | masks[idx]][0] = amps_vec[idx];
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void apply5Targs(Matrix<DTYPE>& sv, QGate& gate) {
+    int q0 = gate.targetQubits[0];
+    int q1 = gate.targetQubits[1];
+    int q2 = gate.targetQubits[2];
+    int q3 = gate.targetQubits[3];
+    int q4 = gate.targetQubits[4];
+
+    vector<ll> masks;
+    int numAmps = 32;
+    masks.push_back(0);
+    masks.push_back(1<<q0);
+    masks.push_back(1<<q1);
+    masks.push_back((1<<q0)|(1<<q1));
+    masks.push_back(1<<q2);
+    masks.push_back((1<<q0)|(1<<q2));
+    masks.push_back((1<<q1)|(1<<q2));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q2));
+    masks.push_back(1<<q3);
+    masks.push_back((1<<q0)|(1<<q3));
+    masks.push_back((1<<q1)|(1<<q3));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q3));
+    masks.push_back((1<<q2)|(1<<q3));
+    masks.push_back((1<<q0)|(1<<q2)|(1<<q3));
+    masks.push_back((1<<q1)|(1<<q2)|(1<<q3));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q3));
+    masks.push_back(1<<q4);
+    masks.push_back((1<<q0)|(1<<q4));
+    masks.push_back((1<<q1)|(1<<q4));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q4));
+    masks.push_back((1<<q2)|(1<<q4));
+    masks.push_back((1<<q0)|(1<<q2)|(1<<q4));
+    masks.push_back((1<<q1)|(1<<q2)|(1<<q4));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q4));
+    masks.push_back((1<<q3)|(1<<q4));
+    masks.push_back((1<<q0)|(1<<q3)|(1<<q4));
+    masks.push_back((1<<q1)|(1<<q3)|(1<<q4));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q3)|(1<<q4));
+    masks.push_back((1<<q2)|(1<<q3)|(1<<q4));
+    masks.push_back((1<<q0)|(1<<q2)|(1<<q3)|(1<<q4));
+    masks.push_back((1<<q1)|(1<<q2)|(1<<q3)|(1<<q4));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q3)|(1<<q4));
+
+#pragma omp parallel for collapse(6)
+    for (ll i = 0; i < sv.row; i += (1<<(q4+1))) {
+        for (ll j = 0; j < (1<<q4); j += (1<<(q3+1))) {
+            for (ll k = 0; k < (1<<q3); k += (1<<(q2+1))) {
+                for (ll l = 0; l < (1<<q2); l += (1<<(q1+1))) {
+                    for (ll m = 0; m < (1<<q1); m += (1<<(q0+1))) {
+                        for (ll n = 0; n < (1<<q0); ++n) {
+                            auto p = i | j | k | l | m | n;
+                            if (!isLegalControlPattern(p, gate))
+                                continue;
+                            vector<DTYPE> amps_vec(numAmps); // save the involved amplitudes
+                            for (int idx = 0; idx < numAmps; ++ idx) {
+                                amps_vec[idx] = sv.data[p | masks[idx]][0];
+                            }
+                            // amps_vec = (*gate.gmat) * amps_vec;
+                            for (int i = 0; i < numAmps; ++ i) {
+                                for (int j = 0; j < numAmps; ++ j) {
+                                    amps_vec[i] += gate.gmat->data[i][j] * amps_vec[j];
+                                }
+                            }
+                            for (ll idx = 0; idx < numAmps; ++ idx) {
+                                sv.data[p | masks[idx]][0] = amps_vec[idx];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
+//     bool isAccessed[sv.row];
+//     memset(isAccessed, 0, sv.row*sizeof(bool));
+
+//     ll numAmps = (1 << gate.numTargets()); // the number of amplitudes involved in matrix-vector multiplication
+//     Matrix<DTYPE> amps_vec(numAmps, 1); // save the involved amplitudes
+
+//     // 1. Calculate the strides for the involved amplitudes
+//     /*  <e.g.>
+//         (1) If there is only one target qubit, two amplitudes are involved. 
+//             If the target qubit is q[k], strides = {0, 2^k}. 
+//         (2) If there are two target qubits, four amplitudes are involved. 
+//                       c  t
+//             idx[0] |..0..0..> -+ strides[0] = 0 --+------------------+
+//                                |                  |                  |
+//             idx[1] |..0..1..> -+ strides[1] = 2^t |                  |
+//                                                   |                  |
+//             idx[2] |..1..0..> --------------------+ strides[2] = 2^c |
+//                                                                      |
+//             idx[3] |..1..1..> ---------------------------------------+ strides[3] = 2^c + 2^t
+//         (3) If there are 'gate.numTargets()' target qubits, there are 'numAmps' amplitudes. 
+//     */
+//     vector<ll> strides(numAmps, 0);
+//     for (ll idx = 0; idx < numAmps; ++ idx) {
+//         ll stride = 0;
+//         for (int j = 0; j < gate.numTargets(); ++ j) {
+//             if (idx & (1 << j)) { // if the j-th bit of idx is 1
+//                 stride += (1 << gate.targetQubits[j]);
+//             }
+//         }
+//         strides[idx] = stride;
+//     }
+
+//     // 2. Iterate over all amplitudes
+//     for (ll ampidx = 0; ampidx < sv.row; ++ ampidx) {
+//         // 2.1. Skip the amplitude if it is already accessed
+//         if (isAccessed[ampidx]) continue;
+
+//         // 2.2. Save the involved amplitudes to amps_vec and mark them as accessed
+//         for (ll idx = 0; idx < numAmps; ++ idx) {
+//             if (ampidx + strides[idx] >= sv.row) {
+//                 cout << "[ERROR] Exceed the length of the state vector." << endl;
+//                 exit(1);
+//             }
+//             amps_vec.data[idx][0] = sv.data[ampidx + strides[idx]][0];
+//             isAccessed[ampidx + strides[idx]] = true;
+//         }
+
+//         // 3. Check the control bits of the current amplitude
+//         //    If the control bits are not satisfied, skip this amplitude group
+//         if (! isLegalControlPattern(ampidx, gate)) {
+//             continue;
+//         }
+
+//         // 4. Apply the gate matrix and update the state vector in place
+//         amps_vec = (*gate.gmat) * amps_vec;
+//         for (ll idx = 0; idx < numAmps; ++ idx) {
+//             sv.data[ampidx + strides[idx]][0] = amps_vec.data[idx][0];
+//         }
+//     }
+// }
+
+void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
+    int numTargets = gate.numTargets();
+    int numAmps = (1 << numTargets); // the number of amplitudes involved in matrix-vector multiplication
 
     // 1. Calculate the strides for the involved amplitudes
-    /*  <e.g.>
-        (1) If there is only one target qubit, two amplitudes are involved. 
-            If the target qubit is q[k], strides = {0, 2^k}. 
-        (2) If there are two target qubits, four amplitudes are involved. 
-                      c  t
-            idx[0] |..0..0..> -+ strides[0] = 0 --+------------------+
-                               |                  |                  |
-            idx[1] |..0..1..> -+ strides[1] = 2^t |                  |
-                                                  |                  |
-            idx[2] |..1..0..> --------------------+ strides[2] = 2^c |
-                                                                     |
-            idx[3] |..1..1..> ---------------------------------------+ strides[3] = 2^c + 2^t
-        (3) If there are 'gate.numTargets()' target qubits, there are 'numAmps' amplitudes. 
-    */
-    vector<ll> strides;
-    for (ll idx = 0; idx < numAmps; ++ idx) {
+    vector<ll> strides(numAmps, 0);
+#pragma omp parallel for
+    for (int idx = 0; idx < numAmps; ++ idx) {
         ll stride = 0;
         for (int j = 0; j < gate.numTargets(); ++ j) {
             if (idx & (1 << j)) { // if the j-th bit of idx is 1
                 stride += (1 << gate.targetQubits[j]);
             }
         }
-        strides.push_back(stride);
+        strides[idx] = stride;
     }
 
     // 2. Iterate over all amplitudes
+#pragma omp parallel for
     for (ll ampidx = 0; ampidx < sv.row; ++ ampidx) {
-        // 2.1. Skip the amplitude if it is already accessed
-        if (isAccessed[ampidx]) continue;
-
-        // 2.2. Save the involved amplitudes to amps_vec and mark them as accessed
-        for (ll idx = 0; idx < numAmps; ++ idx) {
-            if (ampidx + strides[idx] >= sv.row) {
-                cout << "[ERROR] Exceed the length of the state vector." << endl;
-                exit(1);
+        // 2.1. Skip some of the amplitudes
+        bool isStart = true;
+        for (const auto& qid : gate.targetQubits) {
+            if (ampidx & (1 << qid)) { // ...0...0...
+                isStart = false;
+                break;
             }
-            amps_vec.data[idx][0] = sv.data[ampidx + strides[idx]][0];
-            isAccessed[ampidx + strides[idx]] = true;
+        }
+        if (! isStart || ! isLegalControlPattern(ampidx, gate)) continue;
+
+        // 2.2. Save the involved amplitudes to amps_vec
+        Matrix<DTYPE> amps_vec(numAmps, 1); // save the involved amplitudes
+        for (int idx = 0; idx < numAmps; ++ idx) {
+            amps_vec.data[idx][0] = sv.data[ampidx | strides[idx]][0];
         }
 
-        // 3. Check the control bits of the current amplitude
-        //    If the control bits are not satisfied, skip this amplitude group
-        if (! isLegalControlPattern(ampidx, gate)) {
-            continue;
+        // 2.3. Apply the gate matrix and update the state vector in place
+        // amps_vec = (*gate.gmat) * amps_vec;
+        for (int i = 0; i < numAmps; ++ i) {
+            for (int j = 0; j < numAmps; ++ j) {
+                amps_vec.data[i][0] += gate.gmat->data[i][j] * amps_vec.data[j][0];
+            }
         }
-
-        // 4. Apply the gate matrix and update the state vector in place
-        amps_vec = (*gate.gmat) * amps_vec;
-        for (ll idx = 0; idx < numAmps; ++ idx) {
-            sv.data[ampidx + strides[idx]][0] = amps_vec.data[idx][0];
-        }
-    }
-}
-
-void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
-    // 定义复数类型
-    using Complex = std::complex<double>;
-    using StateVector = std::vector<Complex>;
-
-    // 施加在k个量子比特上的门
-    void applyGate(StateVector& state, const std::vector<int>& qubits, const std::vector<std::vector<Complex>>& gate) {
-        int n = state.size();  // 状态向量的大小 (2^n)
-        int num_qubits = qubits.size(); // 操作的量子比特数量
-        int subspace_dim = 1 << num_qubits; // 子空间维度 2^k
-
-        // 遍历所有可能的状态
-        for (int i = 0; i < n; ++i) {
-            // 跳过不在目标子空间的索引
-            bool skip = false;
-            for (int q : qubits) {
-                if ((i & (1 << q)) == 0) {
-                    skip = true;
-                    break;
-                }
-            }
-            if (skip) continue;
-
-            // 计算对应的状态索引
-            std::vector<int> indices(subspace_dim);
-            for (int j = 0; j < subspace_dim; ++j) {
-                int idx = i;
-                for (int q = 0; q < num_qubits; ++q) {
-                    if ((j & (1 << q)) != 0) {
-                        idx |= (1 << qubits[q]);
-                    } else {
-                        idx &= ~(1 << qubits[q]);
-                    }
-                }
-                indices[j] = idx;
-            }
-
-            // 创建新的状态向量
-            std::vector<Complex> new_state(subspace_dim, 0);
-            for (int j = 0; j < subspace_dim; ++j) {
-                for (int k = 0; k < subspace_dim; ++k) {
-                    new_state[j] += gate[j][k] * state[indices[k]];
-                }
-            }
-
-            // 更新状态向量
-            for (int j = 0; j < subspace_dim; ++j) {
-                state[indices[j]] = new_state[j];
-            }
+        for (int idx = 0; idx < numAmps; ++ idx) {
+            sv.data[ampidx | strides[idx]][0] = amps_vec.data[idx][0];
         }
     }
 }

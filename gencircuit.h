@@ -1,12 +1,15 @@
 #pragma once
 
 #include "qcircuit.h"
+#include "omsim.h"
 
 #define random(x) (rand()%x)
 
 //
 // Quantum circuit generators
 //
+
+vector<QGate> testkqubits(int numQubits, int k);
 
 QCircuit test(int numQubits);
 QCircuit QFT(int numQubits);
