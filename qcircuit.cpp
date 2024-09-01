@@ -15,6 +15,40 @@ QCircuit::QCircuit(int numQubits_, string name_){
     name = name_;
 }
 
+QCircuit::QCircuit(int numQubits_, int numDepths_, string name_){
+    numQubits = numQubits_;
+    while (numDepths < numDepths_) {
+        add_level(); // numDepths += 1
+    }
+    name = name_;
+}
+
+QCircuit::QCircuit(QCircuit& qc, int qidFrom, int qidTo, int depthFrom, int depthTo) {
+    numQubits = qidTo - qidFrom;
+    numDepths = depthTo - depthFrom;
+    name = qc.name + "_q" + to_string(qidFrom) + "-" + to_string(qidTo) + "_d" + to_string(depthFrom) + "-" + to_string(depthTo);
+    for (int j = depthFrom; j < depthTo; ++ j) {
+        vector<QGate> level;
+        for (int i = qidFrom; i < qidTo; ++ i) {
+            QGate gate = qc.gates[j][i];
+            if (gate.isMARK() && (gate.targetQubits[0] < qidFrom || gate.targetQubits[0] >= qidTo)) {
+                gate.gname = "IDE";
+                level.push_back(gate);
+            } else {
+                // remap qubits
+                for (auto& qid : gate.controlQubits) {
+                    qid -= qidFrom;
+                }
+                for (auto& qid : gate.targetQubits) {
+                    qid -= qidFrom;
+                }
+                level.push_back(gate);
+            }
+        }
+        gates.push_back(level);
+    }
+}
+
 // 
 // Single-qubit gates
 // 

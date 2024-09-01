@@ -11,6 +11,8 @@ public:
 
     QCircuit();
     QCircuit(int numQubits_, string name_="qcircuit");
+    QCircuit(int numQubits_, int numDepths_, string name_="qcircuit");
+    QCircuit(QCircuit&, int qidFrom, int qidTo, int depthFrom, int depthTo);
 
     // 
     // Single-qubit gates
