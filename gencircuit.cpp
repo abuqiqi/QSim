@@ -323,7 +323,7 @@ QCircuit VQC2(int numQubits) {
 }
 
 QCircuit RandomRegular(int numQubits, int numDepths) {
-    QCircuit qc = QCircuit(numQubits);
+    QCircuit qc = QCircuit(numQubits, "RandomRegular");
     int gTyp;
 
     while (true) {
@@ -363,7 +363,7 @@ QCircuit RandomRegular(int numQubits, int numDepths) {
 }
 
 QCircuit RandomMedium(int numQubits, int numDepths) {
-    QCircuit qc = QCircuit(numQubits);
+    QCircuit qc = QCircuit(numQubits, "RandomMedium");
     int gTyp;
 
     while (true) {
@@ -400,12 +400,12 @@ QCircuit RandomMedium(int numQubits, int numDepths) {
         }
     }
 
-    qc.print();
+    qc.printInfo();
     return qc;
 }
 
 QCircuit RandomRandom(int numQubits, int numDepths) {
-    QCircuit qc = QCircuit(numQubits);
+    QCircuit qc = QCircuit(numQubits, "RandomRandom");
 
     int numGates = 0;
 
