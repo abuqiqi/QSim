@@ -404,6 +404,90 @@ QCircuit RandomMedium(int numQubits, int numDepths) {
     return qc;
 }
 
+QCircuit RandomRX(int numQubits, int numDepths) {
+    QCircuit qc = QCircuit(numQubits, "RandomRX");
+    int gTyp;
+
+    while (true) {
+        // add two levels of CX gates
+        if (qc.numDepths % 10 == 2) {
+            for (int j = numQubits - 1; j > 0; j -= 2) {
+                qc.cx(j, j-1);
+            }
+            for (int j = numQubits - 2; j > 0; j -= 2) {
+                qc.cx(j, j-1);
+            }
+        }
+        // add one level of single-qubit gates
+        else {
+            // random single-qubit gates
+            for (int j = 0; j < numQubits; ++ j) {
+                gTyp = random(4);
+                if (gTyp == 0) {
+                    qc.h(j);
+                }
+                else if (gTyp == 1) {
+                    qc.z(j);
+                }
+                else if (gTyp == 2) {
+                    qc.x(j);
+                } else {
+                    qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), j);
+                }
+            }
+        }
+
+        if (qc.numDepths >= numDepths) {
+            break;
+        }
+    }
+
+    qc.printInfo();
+    return qc;
+}
+
+QCircuit RandomRZ(int numQubits, int numDepths) {
+    QCircuit qc = QCircuit(numQubits, "RandomRZ");
+    int gTyp;
+
+    while (true) {
+        // add two levels of CX gates
+        if (qc.numDepths % 10 == 2) {
+            for (int j = numQubits - 1; j > 0; j -= 2) {
+                qc.cx(j, j-1);
+            }
+            for (int j = numQubits - 2; j > 0; j -= 2) {
+                qc.cx(j, j-1);
+            }
+        }
+        // add one level of single-qubit gates
+        else {
+            // random single-qubit gates
+            for (int j = 0; j < numQubits; ++ j) {
+                gTyp = random(4);
+                if (gTyp == 0) {
+                    qc.h(j);
+                }
+                else if (gTyp == 1) {
+                    qc.z(j);
+                }
+                else if (gTyp == 2) {
+                    qc.x(j);
+                } else {
+                    qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), j);
+                }
+            }
+        }
+
+        if (qc.numDepths >= numDepths) {
+            break;
+        }
+    }
+
+    qc.printInfo();
+    return qc;
+}
+
 QCircuit RandomRandom(int numQubits, int numDepths) {
     QCircuit qc = QCircuit(numQubits, "RandomRandom");
 

@@ -27,6 +27,10 @@ QCircuit RandomRegular(int numQubits, int numDepths);
 // Generate a circuit with relatively random state vector using H, Z, X, RY, CX gates
 QCircuit RandomMedium(int numQubits, int numDepths);
 
+// Generate a circuit with random state vector using H, Z, X, RZ, CX gates
+QCircuit RandomRX(int numQubits, int numDepths);
+QCircuit RandomRZ(int numQubits, int numDepths);
+
 // Generate a circuit with random state vector using RY, CX gates
 QCircuit RandomRandom(int numQubits, int numDepths);
 

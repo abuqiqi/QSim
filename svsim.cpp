@@ -389,13 +389,14 @@ void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
         // 2.3. Apply the gate matrix and update the state vector in place
         // amps_vec = (*gate.gmat) * amps_vec;
         for (int i = 0; i < numAmps; ++ i) {
+            sv.data[ampidx | strides[i]][0] = 0;
             for (int j = 0; j < numAmps; ++ j) {
-                amps_vec.data[i][0] += gate.gmat->data[i][j] * amps_vec.data[j][0];
+                sv.data[ampidx | strides[i]][0] += gate.gmat->data[i][j] * amps_vec.data[j][0];
             }
         }
-        for (int idx = 0; idx < numAmps; ++ idx) {
-            sv.data[ampidx | strides[idx]][0] = amps_vec.data[idx][0];
-        }
+        // for (int idx = 0; idx < numAmps; ++ idx) {
+        //     sv.data[ampidx | strides[idx]][0] = amps_vec.data[idx][0];
+        // }
     }
 }
 

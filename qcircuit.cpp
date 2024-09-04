@@ -400,7 +400,7 @@ void QCircuit::print() {
  * @brief Print the information of the quantum circuit
  */
 void QCircuit::printInfo() {
-    cout << "[INFO] [" << name << "] numQubits: [" << numQubits << "] numDepths: [" << numDepths << "]" << endl;
+    cout << "[INFO] [" << name << "] numQubits: [" << numQubits << "] numDepths: [" << numDepths << "] numGates: [" << numQGates() << "]" << endl;
 }
 
 /**
