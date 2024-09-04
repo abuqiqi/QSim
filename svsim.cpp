@@ -13,8 +13,9 @@ void SVSim(Matrix<DTYPE>& sv, QCircuit& qc) {
             if (gate.isIDE() || gate.isMARK()) {
                 continue;
             }
-            // cout << "[DEBUG] Processing gate: " << gate.gname << endl;
+            // gate.print();
             svsimForGate(sv, gate);
+            // sv.print();
         }
     }
 }
@@ -80,8 +81,13 @@ void apply1Targ(Matrix<DTYPE>& sv, QGate& gate) {
                 continue;
             auto q0 = sv.data[p][0];
             auto q1 = sv.data[p|(1<<qid)][0];
-            sv.data[p][0] = gate.gmat->data[0][0] * q0 + gate.gmat->data[0][1] * q1;
-            sv.data[p|(1<<qid)][0] = gate.gmat->data[1][0] * q0 + gate.gmat->data[1][1] * q1;
+            if (gate.isDiagonal) {
+                sv.data[p][0] = gate.gmat->data[0][0] * q0;
+                sv.data[p|(1<<qid)][0] = gate.gmat->data[1][1] * q1;
+            } else {
+                sv.data[p][0] = gate.gmat->data[0][0] * q0 + gate.gmat->data[0][1] * q1;
+                sv.data[p|(1<<qid)][0] = gate.gmat->data[1][0] * q0 + gate.gmat->data[1][1] * q1;
+            }
         }
     }
 }
@@ -107,6 +113,12 @@ void applySwap(Matrix<DTYPE>& sv, QGate& gate) {
 void apply2Targs(Matrix<DTYPE>& sv, QGate& gate) {
     int q0 = gate.targetQubits[0];
     int q1 = gate.targetQubits[1];
+    vector<ll> masks;
+    int numAmps = 4;
+    masks.push_back(0);
+    masks.push_back(1<<q0);
+    masks.push_back(1<<q1);
+    masks.push_back((1<<q0)|(1<<q1));
 #pragma omp parallel for collapse(3)
     for (ll i = 0; i < sv.row; i += (1<<(q1+1))) {
         for (ll j = 0; j < (1<<q1); j += (1<<(q0+1))) {
@@ -114,14 +126,22 @@ void apply2Targs(Matrix<DTYPE>& sv, QGate& gate) {
                 auto p = i | j | k;
                 if (! isLegalControlPattern(p, gate))
                     continue;
-                auto q00 = sv.data[p][0];
-                auto q01 = sv.data[p|(1<<q0)][0];
-                auto q10 = sv.data[p|(1<<q1)][0];
-                auto q11 = sv.data[p|(1<<q0)|(1<<q1)][0];
-                sv.data[p][0] = gate.gmat->data[0][0] * q00 + gate.gmat->data[0][1] * q01 + gate.gmat->data[0][2] * q10 + gate.gmat->data[0][3] * q11;
-                sv.data[p|(1<<q0)][0] = gate.gmat->data[1][0] * q00 + gate.gmat->data[1][1] * q01 + gate.gmat->data[1][2] * q10 + gate.gmat->data[1][3] * q11;
-                sv.data[p|(1<<q1)][0] = gate.gmat->data[2][0] * q00 + gate.gmat->data[2][1] * q01 + gate.gmat->data[2][2] * q10 + gate.gmat->data[2][3] * q11;
-                sv.data[p|(1<<q0)|(1<<q1)][0] = gate.gmat->data[3][0] * q00 + gate.gmat->data[3][1] * q01 + gate.gmat->data[3][2] * q10 + gate.gmat->data[3][3] * q11;
+                vector<DTYPE> amps_vec(numAmps); // save the involved amplitudes
+                for (int idx = 0; idx < numAmps; ++ idx) {
+                    amps_vec[idx] = sv.data[p | masks[idx]][0];
+                }
+                if (gate.isDiagonal) {
+                    for (int idx = 0; idx < numAmps; ++ idx) {
+                        sv.data[p | masks[idx]][0] = gate.gmat->data[idx][idx] * amps_vec[idx];
+                    }
+                } else {
+                    for (int i = 0; i < numAmps; ++ i) {
+                        sv.data[p | masks[i]][0] = 0;
+                        for (int j = 0; j < numAmps; ++ j) {
+                            sv.data[p | masks[i]][0] += gate.gmat->data[i][j] * amps_vec[j];
+                        }
+                    }
+                }
             }
         }
     }
@@ -131,6 +151,16 @@ void apply3Targs(Matrix<DTYPE>& sv, QGate& gate) {
     int q0 = gate.targetQubits[0];
     int q1 = gate.targetQubits[1];
     int q2 = gate.targetQubits[2];
+    vector<ll> masks;
+    int numAmps = 8;
+    masks.push_back(0);
+    masks.push_back(1<<q0);
+    masks.push_back(1<<q1);
+    masks.push_back((1<<q0)|(1<<q1));
+    masks.push_back(1<<q2);
+    masks.push_back((1<<q0)|(1<<q2));
+    masks.push_back((1<<q1)|(1<<q2));
+    masks.push_back((1<<q0)|(1<<q1)|(1<<q2));
 #pragma omp parallel for collapse(4)
     for (ll i = 0; i < sv.row; i += (1<<(q2+1))) {
         for (ll j = 0; j < (1<<q2); j += (1<<(q1+1))) {
@@ -139,22 +169,22 @@ void apply3Targs(Matrix<DTYPE>& sv, QGate& gate) {
                     auto p = i | j | k | l;
                     if (! isLegalControlPattern(p, gate))
                         continue;
-                    auto q000 = sv.data[p][0];
-                    auto q001 = sv.data[p|(1<<q0)][0];
-                    auto q010 = sv.data[p|(1<<q1)][0];
-                    auto q011 = sv.data[p|(1<<q0)|(1<<q1)][0];
-                    auto q100 = sv.data[p|(1<<q2)][0];
-                    auto q101 = sv.data[p|(1<<q0)|(1<<q2)][0];
-                    auto q110 = sv.data[p|(1<<q1)|(1<<q2)][0];
-                    auto q111 = sv.data[p|(1<<q0)|(1<<q1)|(1<<q2)][0];
-                    sv.data[p][0] = gate.gmat->data[0][0] * q000 + gate.gmat->data[0][1] * q001 + gate.gmat->data[0][2] * q010 + gate.gmat->data[0][3] * q011 + gate.gmat->data[0][4] * q100 + gate.gmat->data[0][5] * q101 + gate.gmat->data[0][6] * q110 + gate.gmat->data[0][7] * q111;
-                    sv.data[p|(1<<q0)][0] = gate.gmat->data[1][0] * q000 + gate.gmat->data[1][1] * q001 + gate.gmat->data[1][2] * q010 + gate.gmat->data[1][3] * q011 + gate.gmat->data[1][4] * q100 + gate.gmat->data[1][5] * q101 + gate.gmat->data[1][6] * q110 + gate.gmat->data[1][7] * q111;
-                    sv.data[p|(1<<q1)][0] = gate.gmat->data[2][0] * q000 + gate.gmat->data[2][1] * q001 + gate.gmat->data[2][2] * q010 + gate.gmat->data[2][3] * q011 + gate.gmat->data[2][4] * q100 + gate.gmat->data[2][5] * q101 + gate.gmat->data[2][6] * q110 + gate.gmat->data[2][7] * q111;
-                    sv.data[p|(1<<q0)|(1<<q1)][0] = gate.gmat->data[3][0] * q000 + gate.gmat->data[3][1] * q001 + gate.gmat->data[3][2] * q010 + gate.gmat->data[3][3] * q011 + gate.gmat->data[3][4] * q100 + gate.gmat->data[3][5] * q101 + gate.gmat->data[3][6] * q110 + gate.gmat->data[3][7] * q111;
-                    sv.data[p|(1<<q2)][0] = gate.gmat->data[4][0] * q000 + gate.gmat->data[4][1] * q001 + gate.gmat->data[4][2] * q010 + gate.gmat->data[4][3] * q011 + gate.gmat->data[4][4] * q100 + gate.gmat->data[4][5] * q101 + gate.gmat->data[4][6] * q110 + gate.gmat->data[4][7] * q111;
-                    sv.data[p|(1<<q0)|(1<<q2)][0] = gate.gmat->data[5][0] * q000 + gate.gmat->data[5][1] * q001 + gate.gmat->data[5][2] * q010 + gate.gmat->data[5][3] * q011 + gate.gmat->data[5][4] * q100 + gate.gmat->data[5][5] * q101 + gate.gmat->data[5][6] * q110 + gate.gmat->data[5][7] * q111;
-                    sv.data[p|(1<<q1)|(1<<q2)][0] = gate.gmat->data[6][0] * q000 + gate.gmat->data[6][1] * q001 + gate.gmat->data[6][2] * q010 + gate.gmat->data[6][3] * q011 + gate.gmat->data[6][4] * q100 + gate.gmat->data[6][5] * q101 + gate.gmat->data[6][6] * q110 + gate.gmat->data[6][7] * q111;
-                    sv.data[p|(1<<q0)|(1<<q1)|(1<<q2)][0] = gate.gmat->data[7][0] * q000 + gate.gmat->data[7][1] * q001 + gate.gmat->data[7][2] * q010 + gate.gmat->data[7][3] * q011 + gate.gmat->data[7][4] * q100 + gate.gmat->data[7][5] * q101 + gate.gmat->data[7][6] * q110 + gate.gmat->data[7][7] * q111;
+                    vector<DTYPE> amps_vec(numAmps); // save the involved amplitudes
+                    for (int idx = 0; idx < numAmps; ++ idx) {
+                        amps_vec[idx] = sv.data[p | masks[idx]][0];
+                    }
+                    if (gate.isDiagonal) {
+                        for (int idx = 0; idx < numAmps; ++ idx) {
+                            sv.data[p | masks[idx]][0] = gate.gmat->data[idx][idx] * amps_vec[idx];
+                        }
+                    } else {
+                        for (int i = 0; i < numAmps; ++ i) {
+                            sv.data[p | masks[i]][0] = 0;
+                            for (int j = 0; j < numAmps; ++ j) {
+                                sv.data[p | masks[i]][0] += gate.gmat->data[i][j] * amps_vec[j];
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -199,14 +229,17 @@ void apply4Targs(Matrix<DTYPE>& sv, QGate& gate) {
                         for (int idx = 0; idx < numAmps; ++ idx) {
                             amps_vec[idx] = sv.data[p | masks[idx]][0];
                         }
-                        // amps_vec = (*gate.gmat) * amps_vec;
-                        for (int i = 0; i < numAmps; ++ i) {
-                            for (int j = 0; j < numAmps; ++ j) {
-                                amps_vec[i] += gate.gmat->data[i][j] * amps_vec[j];
+                        if (gate.isDiagonal) {
+                            for (int idx = 0; idx < numAmps; ++ idx) {
+                                sv.data[p | masks[idx]][0] = gate.gmat->data[idx][idx] * amps_vec[idx];
                             }
-                        }
-                        for (ll idx = 0; idx < numAmps; ++ idx) {
-                            sv.data[p | masks[idx]][0] = amps_vec[idx];
+                        } else {
+                            for (int i = 0; i < numAmps; ++ i) {
+                                sv.data[p | masks[i]][0] = 0;
+                                for (int j = 0; j < numAmps; ++ j) {
+                                    sv.data[p | masks[i]][0] += gate.gmat->data[i][j] * amps_vec[j];
+                                }
+                            }
                         }
                     }
                 }
@@ -271,14 +304,17 @@ void apply5Targs(Matrix<DTYPE>& sv, QGate& gate) {
                             for (int idx = 0; idx < numAmps; ++ idx) {
                                 amps_vec[idx] = sv.data[p | masks[idx]][0];
                             }
-                            // amps_vec = (*gate.gmat) * amps_vec;
-                            for (int i = 0; i < numAmps; ++ i) {
-                                for (int j = 0; j < numAmps; ++ j) {
-                                    amps_vec[i] += gate.gmat->data[i][j] * amps_vec[j];
+                            if (gate.isDiagonal) {
+                                for (int idx = 0; idx < numAmps; ++ idx) {
+                                    sv.data[p | masks[idx]][0] = gate.gmat->data[idx][idx] * amps_vec[idx];
                                 }
-                            }
-                            for (ll idx = 0; idx < numAmps; ++ idx) {
-                                sv.data[p | masks[idx]][0] = amps_vec[idx];
+                            } else {
+                                for (int i = 0; i < numAmps; ++ i) {
+                                    sv.data[p | masks[i]][0] = 0;
+                                    for (int j = 0; j < numAmps; ++ j) {
+                                        sv.data[p | masks[i]][0] += gate.gmat->data[i][j] * amps_vec[j];
+                                    }
+                                }
                             }
                         }
                     }
@@ -388,15 +424,18 @@ void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
 
         // 2.3. Apply the gate matrix and update the state vector in place
         // amps_vec = (*gate.gmat) * amps_vec;
-        for (int i = 0; i < numAmps; ++ i) {
-            sv.data[ampidx | strides[i]][0] = 0;
-            for (int j = 0; j < numAmps; ++ j) {
-                sv.data[ampidx | strides[i]][0] += gate.gmat->data[i][j] * amps_vec.data[j][0];
+        if (gate.isDiagonal) {
+            for (int idx = 0; idx < numAmps; ++ idx) {
+                sv.data[ampidx | strides[idx]][0] = gate.gmat->data[idx][idx] * amps_vec.data[idx][0];
+            }
+        } else {
+            for (int i = 0; i < numAmps; ++ i) {
+                sv.data[ampidx | strides[i]][0] = 0;
+                for (int j = 0; j < numAmps; ++ j) {
+                    sv.data[ampidx | strides[i]][0] += gate.gmat->data[i][j] * amps_vec.data[j][0];
+                }
             }
         }
-        // for (int idx = 0; idx < numAmps; ++ idx) {
-        //     sv.data[ampidx | strides[idx]][0] = amps_vec.data[idx][0];
-        // }
     }
 }
 

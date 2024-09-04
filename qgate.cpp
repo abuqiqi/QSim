@@ -1,11 +1,12 @@
 #include "qgate.h"
 
 QGate::QGate() {
-    gname = "NULL";
+    gname = "MARK";
     controlQubits = {};
     targetQubits = {};
     params = {};
     gmat = nullptr;
+    isDiagonal = false;
 }
 
 /**
@@ -15,7 +16,7 @@ QGate::QGate() {
  * @param controls_ control qubits
  * @param targets_ target qubits
  */
-QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
+QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, bool isDiag) {
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
@@ -25,6 +26,8 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
         cout << "[ERROR] Gate " << gname << " not found in MatrixDict" << endl;
         exit(1);
     }
+    isDiagonal = false;
+    isDiagonal = (isDiag) ? true : this->isDiag();
 }
 
 /**
@@ -35,7 +38,7 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_) {
  * @param targets_ target qubits
  * @param theta a parameter
  */
-QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta) {
+QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta, bool isDiag) {
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
@@ -63,6 +66,8 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     }
     Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
     gmat = Matrix<DTYPE>::MatrixDict[matkey];
+    isDiagonal = false;
+    isDiagonal = (isDiag) ? true : this->isDiag();
 }
 
 /**
@@ -73,7 +78,7 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
  * @param targets_ target qubits
  * @param mat the gate matrix
  */
-QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<DTYPE>& mat) {
+QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<DTYPE>& mat, bool isDiag) {
     gname = gname_;
     controlQubits = controls_;
     targetQubits = targets_;
@@ -83,6 +88,8 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<
         Matrix<DTYPE>::MatrixDict[gname] = make_shared<Matrix<DTYPE>>(move(mat));
         gmat = Matrix<DTYPE>::MatrixDict[gname];
     }
+    isDiagonal = false;
+    isDiagonal = (isDiag) ? true : this->isDiag();
 }
 
 // Copy construct a new QGate::QGate object
@@ -92,6 +99,7 @@ QGate::QGate(const QGate& other) {
     targetQubits = other.targetQubits;
     params = other.params;
     gmat = other.gmat;
+    isDiagonal = other.isDiagonal;
 }
 
 // Copy assignment
@@ -101,12 +109,17 @@ QGate& QGate::operator=(const QGate& other) {
     targetQubits = other.targetQubits;
     params = other.params;
     gmat = other.gmat;
+    isDiagonal = other.isDiagonal;
     return *this;
 }
 
 // Compare two gates
 bool QGate::operator==(const QGate& other) const {
-    return gname == other.gname && controlQubits == other.controlQubits && targetQubits == other.targetQubits && params == other.params;
+    return gname == other.gname && 
+           controlQubits == other.controlQubits && 
+           targetQubits == other.targetQubits && 
+           params == other.params &&
+           isDiagonal == other.isDiagonal;
 }
 
 // Return the qubits of the gate
@@ -144,7 +157,7 @@ string QGate::gmatKey() {
 // Get the full gate matrix for a controlled gate
 shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
     if (is2QubitControlled()) { // generate a 2-qubit controlled gate's matrix
-        cout << "[DEBUG] is2QubitControlled" << endl;
+        // cout << "[DEBUG] is2QubitControlled" << endl;
         string matkey = gmatKey();
         shared_ptr<Matrix<DTYPE>> fullmat;
         if (controlQubits[0] > targetQubits[0]) { // CU gate
@@ -215,12 +228,17 @@ bool QGate::is2QubitControlled() {
 
 // Check if the gate is hermitian
 bool QGate::isHermitian() {
-    return gname == "X" || gname == "Y" || gname == "Z" || gname == "H" || gname == "SWAP";
+    return gname == "IDE" || gname == "X" || gname == "Y" || gname == "Z" || gname == "H" || gname == "SWAP";
 }
 
 // Check if the gate is a phase gate
 bool QGate::isPhase() {
-    return gname == "Z" || gname == "S" || gname == "T" || gname == "U1";
+    return gname == "IDE" || gname == "Z" || gname == "S" || gname == "T" || gname == "U1";
+}
+
+// Check if the gate is diagonal
+bool QGate::isDiag() {
+    return isPhase() || isDiagonal;
 }
 
 // Check if qubit[qid] is a control qubit of the gate
@@ -251,6 +269,7 @@ void QGate::printInfo() {
         cout << param << " ";
     }
     cout << endl;
+    cout << "Is diagonal: " << isDiagonal << endl;
     cout << "=====================" << endl;
 }
 

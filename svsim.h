@@ -24,6 +24,7 @@ void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq);
  */
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
 void applyPhase(Matrix<DTYPE>& sv, QGate& gate);
+void applyDiagonal(Matrix<DTYPE>& sv, QGate& gate);
 void apply1Targ(Matrix<DTYPE>& sv, QGate& gate);
 void applySwap(Matrix<DTYPE>& sv, QGate& gate);
 void apply2Targs(Matrix<DTYPE>& sv, QGate& gate);

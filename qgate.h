@@ -9,11 +9,12 @@ public:
     vector<int> targetQubits; // the target qubits of the gate
     vector<double> params; // the parameters of the gate
     shared_ptr<Matrix<DTYPE>> gmat; // the gate matrix
+    bool isDiagonal; // check if the gate matrix is diagonal
 
     QGate();
-    QGate(string gname_, vector<int> controls_, vector<int> targets_);
-    QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta);
-    QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<DTYPE>& mat);
+    QGate(string gname_, vector<int> controls_, vector<int> targets_, bool isDiag = false);
+    QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta, bool isDiag = false);
+    QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<DTYPE>& mat, bool isDiag = false);
     QGate(const QGate& other);
 
     QGate& operator=(const QGate& other);
@@ -33,6 +34,7 @@ public:
     bool is2QubitControlled(); // check if the gate is a 2-qubit controlled gate
     bool isHermitian(); // check if the gate is hermitian
     bool isPhase(); // check if the gate is a phase gate
+    bool isDiag(); // check if the gate is diagonal
 
     bool isControlQubit(int qid); // check if qubit[qid] is a control qubit of the gate
     bool isTargetQubit(int qid); // check if qubit[qid] is a target qubit of the gate

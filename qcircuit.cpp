@@ -348,6 +348,7 @@ void QCircuit::setDepths(int numDepths_) {
  */
 void QCircuit::applyGates(vector<QGate>& gateSeq) {
     for (auto& gate : gateSeq) {
+        if (gate.isIDE()) continue;
         for (auto& qid : gate.qubits()) {
             if (! gates[numDepths-1][qid].isIDE()) {
                 add_level();
