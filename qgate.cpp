@@ -1,7 +1,7 @@
 #include "qgate.h"
 
 QGate::QGate() {
-    gname = "MARK";
+    gname = "-";
     controlQubits = {};
     targetQubits = {};
     params = {};
@@ -167,7 +167,7 @@ shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
                 Matrix<DTYPE> mat(4, 4);
                 Matrix<DTYPE> basismat(2, 2);
                 basismat.data[0][0] = 1;
-                mat = basismat.tensorProduct(*Matrix<DTYPE>::MatrixDict["IDE"]);
+                mat = basismat.tensorProduct(*Matrix<DTYPE>::MatrixDict["I"]);
                 basismat.data[0][0] = 0;
                 basismat.data[1][1] = 1;
                 mat += basismat.tensorProduct(*gmat);
@@ -181,7 +181,7 @@ shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
                 Matrix<DTYPE> mat(4, 4);
                 Matrix<DTYPE> basismat(2, 2);
                 basismat.data[0][0] = 1;
-                mat = Matrix<DTYPE>::MatrixDict["IDE"]->tensorProduct(basismat);
+                mat = Matrix<DTYPE>::MatrixDict["I"]->tensorProduct(basismat);
                 basismat.data[0][0] = 0;
                 basismat.data[1][1] = 1;
                 mat += gmat->tensorProduct(basismat);
@@ -203,42 +203,47 @@ shared_ptr<Matrix<DTYPE>> QGate::getFullMatrix() {
 
 // Check if the gate is an identity gate
 bool QGate::isIDE() {
-    return gname == "IDE";
+    return gname == "I";
 }
 
 // Check if the gate is a placeholder gate
 bool QGate::isMARK() {
-    return gname == "MARK";
+    return gname == "-";
 }
 
 // Check if the gate is a single-qubit gate
 bool QGate::isSingle() {
-    return gname != "IDE" && gname != "MARK" && controlQubits.size() == 0 && targetQubits.size() == 1;
+    return gname != "I" && gname != "-" && controlQubits.size() == 0 && targetQubits.size() == 1;
 }
 
 // Check if the gate is a controlled gate
 bool QGate::isControlled() {
-    return gname != "MARK" && controlQubits.size() > 0;
+    return gname != "-" && controlQubits.size() > 0;
 }
 
 // Check if the gate is a 2-qubit controlled gate
 bool QGate::is2QubitControlled() {
-    return gname != "MARK" && controlQubits.size() == 1 && targetQubits.size() == 1;
+    return gname != "-" && controlQubits.size() == 1 && targetQubits.size() == 1;
 }
 
 // Check if the gate is hermitian
 bool QGate::isHermitian() {
-    return gname == "IDE" || gname == "X" || gname == "Y" || gname == "Z" || gname == "H" || gname == "SWAP";
+    return gname == "I" || gname == "X" || gname == "Y" || gname == "Z" || gname == "H" || gname == "SWAP";
 }
 
 // Check if the gate is a phase gate
 bool QGate::isPhase() {
-    return gname == "IDE" || gname == "Z" || gname == "S" || gname == "T" || gname == "U1";
+    return gname == "I" || gname == "Z" || gname == "S" || gname == "T" || gname == "U1";
 }
 
 // Check if the gate is diagonal
 bool QGate::isDiag() {
     return isPhase() || isDiagonal;
+}
+
+// Check if the gate is a CNOT gate
+bool QGate::isCX() {
+    return gname == "X" && controlQubits.size() == 1;
 }
 
 // Check if qubit[qid] is a control qubit of the gate
@@ -248,7 +253,7 @@ bool QGate::isControlQubit(int qid) {
 
 // Check if qubit[qid] is a target qubit of the gate
 bool QGate::isTargetQubit(int qid) {
-    return gname != "IDE" && gname != "MARK" && find(targetQubits.begin(), targetQubits.end(), qid) != targetQubits.end();
+    return gname != "I" && gname != "-" && find(targetQubits.begin(), targetQubits.end(), qid) != targetQubits.end();
 }
 
 // Print the gate information

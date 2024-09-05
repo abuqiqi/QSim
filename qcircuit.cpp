@@ -32,7 +32,7 @@ QCircuit::QCircuit(QCircuit& qc, int qidFrom, int qidTo, int depthFrom, int dept
         for (int i = qidFrom; i < qidTo; ++ i) {
             QGate gate = qc.gates[j][i];
             if (gate.isMARK() && (gate.targetQubits[0] < qidFrom || gate.targetQubits[0] >= qidTo)) {
-                gate.gname = "IDE";
+                gate.gname = "I";
                 level.push_back(gate);
             } else {
                 // remap qubits
@@ -172,7 +172,7 @@ void QCircuit::cx(int ctrl, int targ) {
         }
     }
     for (int i = start; i <= end; ++ i) {
-        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("X", {ctrl}, {targ});
 }
@@ -193,7 +193,7 @@ void QCircuit::cy(int ctrl, int targ) {
         }
     }
     for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("Y", {ctrl}, {targ});
 }
@@ -214,7 +214,7 @@ void QCircuit::cz(int ctrl, int targ) {
         }
     }
     for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("Z", {ctrl}, {targ});
 }
@@ -229,7 +229,7 @@ void QCircuit::cs(int ctrl, int targ) {
         }
     }
     for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("S", {ctrl}, {targ});
 }
@@ -244,7 +244,7 @@ void QCircuit::ct(int ctrl, int targ) {
         }
     }
     for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("T", {ctrl}, {targ});
 }
@@ -259,7 +259,7 @@ void QCircuit::crz(double theta, int ctrl, int targ) {
         }
     }
     for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("RZ", {ctrl}, {targ}, theta);
 }
@@ -274,7 +274,7 @@ void QCircuit::cu1(double lambda, int ctrl, int targ) {
         }
     }
     for (int i = start; i <= end; ++i) {
-        gates[numDepths-1][i] = QGate("MARK", {ctrl}, {targ});
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
     }
     gates[numDepths-1][targ] = QGate("U1", {ctrl}, {targ}, lambda);
 }
@@ -295,7 +295,7 @@ void QCircuit::swap(int qid1, int qid2) {
         }
     }
     for (int i = start; i <= end; ++ i) {
-        gates[numDepths-1][i] = QGate("MARK", {}, {start, end});
+        gates[numDepths-1][i] = QGate("-", {}, {start, end});
     }
     gates[numDepths-1][end] = QGate("SWAP", {}, {start, end});
 }
@@ -317,7 +317,7 @@ void QCircuit::ccz(vector<int> ctrls, int targ) {
         }
     }
     for (int i = start; i <= end; ++ i) {
-        gates[numDepths-1][i] = QGate("MARK", ctrls, {targ});
+        gates[numDepths-1][i] = QGate("-", ctrls, {targ});
     }
     gates[numDepths-1][targ] = QGate("Z", ctrls, {targ});
 }
@@ -358,7 +358,7 @@ void QCircuit::applyGates(vector<QGate>& gateSeq) {
         int start = gate.qubits()[0];
         int end = gate.qubits()[gate.qubits().size()-1];
         for (int i = start; i <= end; ++ i) {
-            gates[numDepths-1][i] = QGate("MARK", gate.controlQubits, gate.targetQubits);
+            gates[numDepths-1][i] = QGate("-", gate.controlQubits, gate.targetQubits);
         }
         int targ = gate.targetQubits[gate.targetQubits.size()-1]; // the highest target qubit
         if (gate.params.size() > 0) {
@@ -389,6 +389,8 @@ void QCircuit::print() {
                 cout << "C";
             } else if (gates[j][i].isTargetQubit(i)) {
                 cout << "T";
+            } else if (gates[j][i].isMARK()) {
+                cout << "t";
             }
             cout << gates[j][i].gname << "\t"; 
         }
@@ -410,7 +412,7 @@ void QCircuit::printInfo() {
 void QCircuit::add_level() {
     vector<QGate> level;
     for (int i = 0; i < numQubits; ++ i) {
-        level.push_back(QGate("IDE", {}, {i}));
+        level.push_back(QGate("I", {}, {i}));
     }
     gates.push_back(level);
     numDepths ++;

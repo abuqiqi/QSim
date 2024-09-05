@@ -35,6 +35,7 @@ public:
     bool isHermitian(); // check if the gate is hermitian
     bool isPhase(); // check if the gate is a phase gate
     bool isDiag(); // check if the gate is diagonal
+    bool isCX(); // check if the gate is a CNOT gate
 
     bool isControlQubit(int qid); // check if qubit[qid] is a control qubit of the gate
     bool isTargetQubit(int qid); // check if qubit[qid] is a target qubit of the gate
