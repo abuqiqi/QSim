@@ -1,5 +1,7 @@
 #include "svsim.h"
 
+#define OMP_ENABLED
+
 /**
  * @brief State vector simulation of a quantum circuit on the state vector
  * 
@@ -73,7 +75,9 @@ void applyPhase(Matrix<DTYPE>& sv, QGate& gate) {
 
 void apply1Targ(Matrix<DTYPE>& sv, QGate& gate) {
     int qid = gate.targetQubits[0];
+#ifdef OMP_ENABLED
 #pragma omp parallel for collapse(2)
+#endif
     for (ll i = 0; i < sv.row; i += (1<<(qid+1))) {
         for (ll j = 0; j < (1<<qid); ++ j) {
             auto p = i | j;
@@ -95,7 +99,9 @@ void apply1Targ(Matrix<DTYPE>& sv, QGate& gate) {
 void applySwap(Matrix<DTYPE>& sv, QGate& gate) {
     int q0 = gate.targetQubits[0];
     int q1 = gate.targetQubits[1];
+#ifdef OMP_ENABLED
 #pragma omp parallel for collapse(3)
+#endif
     for (ll i = 0; i < sv.row; i += (1<<(q1+1))) {
         for (ll j = 0; j < (1<<q1); j += (1<<(q0+1))) {
             for (ll k = 0; k < (1<<q0); ++ k) {
@@ -150,7 +156,9 @@ void applySwap(Matrix<DTYPE>& sv, QGate& gate) {
 void apply2Targs(Matrix<DTYPE>& sv, QGate& gate) {
     int q0 = gate.targetQubits[0];
     int q1 = gate.targetQubits[1];
+#ifdef OMP_ENABLED
 #pragma omp parallel for collapse(3)
+#endif
     for (ll i = 0; i < sv.row; i += (1<<(q1+1))) {
         for (ll j = 0; j < (1<<q1); j += (1<<(q0+1))) {
             for (ll k = 0; k < (1<<q0); ++ k) {
@@ -226,7 +234,9 @@ void apply3Targs(Matrix<DTYPE>& sv, QGate& gate) {
     int q0 = gate.targetQubits[0];
     int q1 = gate.targetQubits[1];
     int q2 = gate.targetQubits[2];
+#ifdef OMP_ENABLED
 #pragma omp parallel for collapse(4)
+#endif
     for (ll i = 0; i < sv.row; i += (1<<(q2+1))) {
         for (ll j = 0; j < (1<<q2); j += (1<<(q1+1))) {
             for (ll k = 0; k < (1<<q1); k += (1<<(q0+1))) {
@@ -292,7 +302,9 @@ void apply4Targs(Matrix<DTYPE>& sv, QGate& gate) {
     masks.push_back((1<<q1)|(1<<q2)|(1<<q3));
     masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q3));
 
+#ifdef OMP_ENABLED
 #pragma omp parallel for collapse(5)
+#endif
     for (ll i = 0; i < sv.row; i += (1<<(q3+1))) {
         for (ll j = 0; j < (1<<q3); j += (1<<(q2+1))) {
             for (ll k = 0; k < (1<<q2); k += (1<<(q1+1))) {
@@ -366,7 +378,9 @@ void apply5Targs(Matrix<DTYPE>& sv, QGate& gate) {
     masks.push_back((1<<q1)|(1<<q2)|(1<<q3)|(1<<q4));
     masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q3)|(1<<q4));
 
+#ifdef OMP_ENABLED
 #pragma omp parallel for collapse(6)
+#endif
     for (ll i = 0; i < sv.row; i += (1<<(q4+1))) {
         for (ll j = 0; j < (1<<q4); j += (1<<(q3+1))) {
             for (ll k = 0; k < (1<<q3); k += (1<<(q2+1))) {
@@ -468,7 +482,9 @@ void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
 
     // 1. Calculate the strides for the involved amplitudes
     vector<ll> strides(numAmps, 0);
+#ifdef OMP_ENABLED
 #pragma omp parallel for
+#endif
     for (int idx = 0; idx < numAmps; ++ idx) {
         ll stride = 0;
         for (int j = 0; j < gate.numTargets(); ++ j) {
@@ -480,7 +496,9 @@ void applyMultiTargs(Matrix<DTYPE>& sv, QGate& gate) {
     }
 
     // 2. Iterate over all amplitudes
+#ifdef OMP_ENABLED
 #pragma omp parallel for
+#endif
     for (ll ampidx = 0; ampidx < sv.row; ++ ampidx) {
         // 2.1. Skip some of the amplitudes
         bool isStart = true;
