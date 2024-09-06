@@ -1,6 +1,6 @@
 #include "svsim.h"
 
-#define OMP_ENABLED
+// #define OMP_ENABLED
 
 /**
  * @brief State vector simulation of a quantum circuit on the state vector
@@ -40,24 +40,24 @@ void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq) {
  * @param gate  the processing gate
  */
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate) {
-    if (gate.isPhase()) {
-        applyPhase(sv, gate);
-    } else if (gate.numTargets() == 1) {
-        apply1Targ(sv, gate);
-    } else if (gate.gname == "SWAP") {
-        applySwap(sv, gate);
-    } else if (gate.numTargets() == 2) {
-        apply2Targs(sv, gate);
-    } else if (gate.numTargets() == 3) {
-        apply3Targs(sv, gate);
-    } else if (gate.numTargets() == 4) {
-        apply4Targs(sv, gate);
-    } else if (gate.numTargets() == 5) {
-        apply5Targs(sv, gate);
-    } else {
-        applyMultiTargs(sv, gate);
-    }
-    // applyMultiTargs(sv, gate);
+    // if (gate.isPhase()) {
+    //     applyPhase(sv, gate);
+    // } else if (gate.numTargets() == 1) {
+    //     apply1Targ(sv, gate);
+    // } else if (gate.gname == "SWAP") {
+    //     applySwap(sv, gate);
+    // } else if (gate.numTargets() == 2) {
+    //     apply2Targs(sv, gate);
+    // } else if (gate.numTargets() == 3) {
+    //     apply3Targs(sv, gate);
+    // } else if (gate.numTargets() == 4) {
+    //     apply4Targs(sv, gate);
+    // } else if (gate.numTargets() == 5) {
+    //     apply5Targs(sv, gate);
+    // } else {
+    //     applyMultiTargs(sv, gate);
+    // }
+    applyMultiTargs(sv, gate);
 }
 
 void applyPhase(Matrix<DTYPE>& sv, QGate& gate) {
