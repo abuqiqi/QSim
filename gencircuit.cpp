@@ -1,6 +1,6 @@
 #include "gencircuit.h"
 
-vector<QGate> testkqubits(int numQubits, int k) {
+vector<QGate> testkqubits(int k) {
     QCircuit subqc(k, "subqc");
     vector<int> targs;
     for (int i = 0; i < k; ++ i) {
@@ -13,16 +13,29 @@ vector<QGate> testkqubits(int numQubits, int k) {
     // kqubitgate.print();
 
     vector<QGate> gateSeq;
-    for (int i = 0; i < 120 / k; ++ i) {
+    // for (int i = 0; i < 120 / k; ++ i) {
+    for (int i = 0; i < 100; ++ i) {
         gateSeq.push_back(kqubitgate);
     }
     return gateSeq;
+}
 
-    // QCircuit qc(numQubits, to_string(k)+"-qubit");
-    // qc.applyGates(gateSeq);
+// a controlled gate with k control qubits
+vector<QGate> testkctrls(int k) {
+    // generate a controlled gate with k control qubits
+    vector<int> ctrls(k);
+    for (int i = 0; i < k; ++ i) {
+        ctrls[i] = i;
+    }
 
-    // // qc.print();
-    // return qc;
+    vector<QGate> gateSeq;
+    QGate kctrlgate("H", ctrls, {k + 1});
+    // kqubitgate.print();
+
+    for (int i = 0; i < 100; ++ i) {
+        gateSeq.push_back(kctrlgate);
+    }
+    return gateSeq;
 }
 
 QCircuit test(int numQubits) {

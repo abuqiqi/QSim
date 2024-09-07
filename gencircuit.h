@@ -8,8 +8,8 @@
 //
 // Quantum circuit generators
 //
-
-vector<QGate> testkqubits(int numQubits, int k);
+vector<QGate> testkctrls(int k);
+vector<QGate> testkqubits(int k);
 
 QCircuit test(int numQubits);
 QCircuit QFT(int numQubits);
