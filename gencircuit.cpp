@@ -174,7 +174,7 @@ QCircuit QAOA(int numQubits) {
     for (int i = 0; i < numQubits; ++ i)
         qc.h(i);
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 
