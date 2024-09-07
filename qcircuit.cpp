@@ -454,3 +454,22 @@ string QCircuit::cmatkey() {
     }
     return key;
 }
+
+void QCircuit::getFuseInfo() {
+    ll numMuls = 0;
+    int numGates = 0;
+    size_t memSize = 0;
+    for (int j = 0; j < numDepths; ++ j) {
+        for (auto &op : gates[j]) {
+            if (!op.isIDE() && !op.isMARK()) {
+                numMuls += op.numMuls(numQubits); // #multiplications
+                ++ numGates; // #gates
+                memSize += op.memSize(); // memory
+            }
+        }
+    }
+    cout << "[INFO] #muls: [" << numMuls / 1e6 << "] x1e6" << endl;
+    cout << "[INFO] #gates: [" << numGates << "]" << endl;
+    cout << "[INFO] memSize: [" << memSize / 1024 << "] KB" << endl;
+    return;
+}

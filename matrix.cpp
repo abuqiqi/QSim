@@ -395,7 +395,7 @@ void Matrix<T>::initMatrixDict() {
     // MatrixDict["MINUS"] = make_shared<Matrix<T>>(2, 1, (T**)minus);
 
     // -------------- Gates -----------------
-
+    MatrixDict.clear();
     T ide[2][2] = {{1, 0},
                    {0, 1}};
     MatrixDict["I"] = make_shared<Matrix<T>>(2, 2, (T**)ide);

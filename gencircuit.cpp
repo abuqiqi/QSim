@@ -64,12 +64,14 @@ QCircuit QFT(int numQubits) {
             qc.cu1(2 * acos(-1.0) / pow(2, k), j, i);
         }
     }
-    qc.print();
+    // qc.print();
     return qc;
 }
 
 QCircuit Adder(int numQubits) {
     QCircuit qc(numQubits, "Adder");
+    qc.h(0);
+    qc.h(1);
     // QFT
     for (int i = numQubits/2; i < numQubits; ++ i) {
         qc.h(i);
@@ -96,7 +98,7 @@ QCircuit Adder(int numQubits) {
         }
         qc.h(i);
     }
-    qc.print();
+    // qc.print();
     return qc;
 }
 
@@ -176,6 +178,31 @@ QCircuit QAOA(int numQubits) {
     return qc;
 }
 
+// IQP
+QCircuit IQP(int numQubits) {
+    QCircuit qc(numQubits, "IQP");
+    for (int i = 0; i < numQubits; ++ i) {
+        qc.h(i);
+    }
+
+    for (int i = 0; i < numQubits; ++ i) {
+        for (int j = i + 1; j < numQubits; ++ j) {
+            qc.cu1(random(10) * acos(-1.0) / 2, j, i);
+        }
+    }
+
+    for (int i = 0; i < numQubits; ++ i) {
+        qc.u1(random(10) * acos(-1.0) / 8, i);
+    }
+
+    for (int i = 0; i < numQubits; ++ i) {
+        qc.h(i);
+    }
+
+    // qc.print();
+    return qc;
+}
+
 /**
  * @brief Generate a Grover's circuit
  * 
@@ -233,7 +260,7 @@ QCircuit Grover(int numQubits, int k) {
 QCircuit VQC(int numQubits) {
     QCircuit qc = QCircuit(numQubits, "VQC");
 
-    for (int j = 0; j < 20; ++ j) {
+    for (int j = 0; j < 1; ++ j) {
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
@@ -331,7 +358,7 @@ QCircuit VQC2(int numQubits) {
         for (int i = 0; i < numQubits; ++ i)
             qc.ry(2 * std::acos(-1.0), i);
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 

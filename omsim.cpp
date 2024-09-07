@@ -19,6 +19,7 @@ Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
 
     // calculate the operation matrix of the quantum circuit
     for (int j = 0; j < qc.numDepths; ++ j) {
+        // cout << "[DEBUG] level " << j << " ";
         int qid = qc.numQubits-1;
 
         // get the highest gate matrix
@@ -49,6 +50,7 @@ Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
         opmat = levelmat * opmat;
         // ///////////////////////////////////////////////////////////////////////////
     }
+    // cout << endl;
     return opmat;
 }
 
@@ -73,6 +75,9 @@ Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
     if (gate.gname == "SWAP") {
         // Return the complete matrix of a SWAP gate
         return genSwapGateMatrix(gate);
+    }
+    if (gate.is2QubitNonControlled() && (gate.targetQubits[0] + 1 != gate.targetQubits[1])) { // non-adjacent
+        return gen2QubitGateMatrix(gate);
     }
     return * gate.gmat;
     // cout << "[ERROR] getCompleteMatrix: " << gate.gname << " not implemented" << endl;
@@ -160,4 +165,36 @@ void swapRow(ll r1, ll r2, Matrix<DTYPE>& gate) {
     memcpy(tmp, gate.data[r1], gate.row * sizeof(DTYPE));
     memcpy(gate.data[r1], gate.data[r2], gate.row * sizeof(DTYPE));
     memcpy(gate.data[r2], tmp, gate.row * sizeof(DTYPE));
+}
+
+Matrix<DTYPE> gen2QubitGateMatrix(QGate& gate) {
+    int span = gate.targetQubits[1] - gate.targetQubits[0] + 1;
+    ll n = (1 << span);
+    ll block_size = n / 4;
+    Matrix<DTYPE> mat;
+    mat.identity(n);
+
+    // MAT \otimes I \otimes I ...
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            ll base_row = i * block_size; // the left-upper element index
+            ll base_col = j * block_size;
+            for (ll k = 0; k < block_size; ++k) { // diagonal
+                mat.data[base_row + k][base_col + k] = gate.gmat->data[i][j];
+            }
+        }
+    }
+    // swap rows
+    ll mask0 = (1 << (span - 2));
+    ll mask1 = 1;
+    ll row;
+    for (ll i = 0; i < (1 << span); ++ i) {
+        if ((i & mask0) == 0 && (i & mask1) == mask1) {
+            // i   := |.0..1>
+            // row := |.1..0>
+            row = i ^ mask0 ^ mask1;
+            swapRow(i, row, mat);
+        }
+    }
+    return mat;
 }

@@ -40,6 +40,7 @@ Matrix<DTYPE> genControlledGateMatrix(QGate& gate);
  * @return Matrix<DTYPE> a complete gate matrix
  */
 Matrix<DTYPE> genSwapGateMatrix(QGate& gate);
+Matrix<DTYPE> gen2QubitGateMatrix(QGate& gate);
 
 /**
  * @brief Swap two rows of a gate matrix

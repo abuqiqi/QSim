@@ -145,6 +145,25 @@ int QGate::numTargets() {
     return targetQubits.size();
 }
 
+// #multiplications
+ll QGate::numMuls(int numQubits) {
+    if (isDiagonal) {
+        return (1 << numQubits) / (1 << numControls());
+    }
+    return (1 << numQubits) * (1 << numTargets()) / (1 << numControls());
+}
+
+// The memory footprint of the gate matrix
+size_t QGate::memSize() {
+    size_t mem_size = 0;
+    if (isDiagonal) { // deal with diagonal matrix
+        mem_size += (1 << numTargets());
+    } else {
+        mem_size += (1 << numTargets()) * (1 << numTargets());
+    }
+    return mem_size * sizeof(DTYPE);
+}
+
 // Return the key of the gate matrix in the MatrixDict
 string QGate::gmatKey() {
     string matkey = gname;
@@ -224,6 +243,11 @@ bool QGate::isControlled() {
 // Check if the gate is a 2-qubit controlled gate
 bool QGate::is2QubitControlled() {
     return gname != "-" && controlQubits.size() == 1 && targetQubits.size() == 1;
+}
+
+// Check if the gate is a 2-qubit non-controlled gate
+bool QGate::is2QubitNonControlled() {
+    return gname != "-" && controlQubits.size() == 0 && targetQubits.size() == 2;
 }
 
 // Check if the gate is hermitian

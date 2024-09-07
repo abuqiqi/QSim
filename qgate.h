@@ -24,6 +24,8 @@ public:
     int numQubits(); // the number of input/output qubits of the gate
     int numControls(); // the number of control qubits of the gate
     int numTargets(); // the number of target qubits of the gate
+    ll numMuls(int numQubits); // #multiplications
+    size_t memSize(); // the memory footprint of the gate matrix
     string gmatKey(); // the key of the gate matrix in the MatrixDict
     shared_ptr<Matrix<DTYPE>> getFullMatrix(); // the full gate matrix for a controlled gate
 
@@ -32,6 +34,7 @@ public:
     bool isSingle(); // check if the gate is a single-qubit gate
     bool isControlled(); // check if the gate is a controlled gate
     bool is2QubitControlled(); // check if the gate is a 2-qubit controlled gate
+    bool is2QubitNonControlled(); // check if the gate is a 2-qubit non-controlled gate
     bool isHermitian(); // check if the gate is hermitian
     bool isPhase(); // check if the gate is a phase gate
     bool isDiag(); // check if the gate is diagonal
