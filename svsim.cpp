@@ -2,6 +2,20 @@
 
 #define OMP_ENABLED
 
+void SVSimNoFuser(Matrix<DTYPE>& sv, QCircuit& qc) {
+    for (int j = 0; j < qc.numDepths; ++ j) {
+        for (int qid = 0; qid < qc.numQubits; ++ qid) {
+            QGate& gate = qc.gates[j][qid];
+            if (gate.isIDE() || gate.isMARK()) {
+                continue;
+            }
+            // gate.print();
+            svsimForGateNoFuser(sv, gate);
+            // sv.print();
+        }
+    }
+}
+
 /**
  * @brief State vector simulation of a quantum circuit on the state vector
  * 
@@ -30,6 +44,24 @@ void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq) {
         // cout << "[DEBUG] Processing gate: " << gate.gname << endl;
         // gate.printInfo();
         svsimForGate(sv, gate);
+    }
+}
+
+void svsimForGateNoFuser(Matrix<DTYPE>& sv, QGate& gate) {
+    if (gate.numTargets() == 1) {
+        apply1Targ(sv, gate);
+    } else if (gate.gname == "SWAP") {
+        applySwap(sv, gate);
+    } else if (gate.numTargets() == 2) {
+        apply2Targs(sv, gate);
+    } else if (gate.numTargets() == 3) {
+        apply3Targs(sv, gate);
+    } else if (gate.numTargets() == 4) {
+        apply4Targs(sv, gate);
+    } else if (gate.numTargets() == 5) {
+        apply5Targs(sv, gate);
+    } else {
+        applyMultiTargs(sv, gate);
     }
 }
 
@@ -76,7 +108,7 @@ void applyPhase(Matrix<DTYPE>& sv, QGate& gate) {
 void apply1Targ(Matrix<DTYPE>& sv, QGate& gate) {
     int qid = gate.targetQubits[0];
 #ifdef OMP_ENABLED
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for // collapse(2)
 #endif
     for (ll i = 0; i < sv.row; i += (1<<(qid+1))) {
         for (ll j = 0; j < (1<<qid); ++ j) {
@@ -100,7 +132,7 @@ void applySwap(Matrix<DTYPE>& sv, QGate& gate) {
     int q0 = gate.targetQubits[0];
     int q1 = gate.targetQubits[1];
 #ifdef OMP_ENABLED
-#pragma omp parallel for collapse(3)
+#pragma omp parallel for // collapse(3)
 #endif
     for (ll i = 0; i < sv.row; i += (1<<(q1+1))) {
         for (ll j = 0; j < (1<<q1); j += (1<<(q0+1))) {
@@ -157,7 +189,7 @@ void apply2Targs(Matrix<DTYPE>& sv, QGate& gate) {
     int q0 = gate.targetQubits[0];
     int q1 = gate.targetQubits[1];
 #ifdef OMP_ENABLED
-#pragma omp parallel for collapse(3)
+#pragma omp parallel for // collapse(3)
 #endif
     for (ll i = 0; i < sv.row; i += (1<<(q1+1))) {
         for (ll j = 0; j < (1<<q1); j += (1<<(q0+1))) {
@@ -235,7 +267,7 @@ void apply3Targs(Matrix<DTYPE>& sv, QGate& gate) {
     int q1 = gate.targetQubits[1];
     int q2 = gate.targetQubits[2];
 #ifdef OMP_ENABLED
-#pragma omp parallel for collapse(4)
+#pragma omp parallel for // collapse(4)
 #endif
     for (ll i = 0; i < sv.row; i += (1<<(q2+1))) {
         for (ll j = 0; j < (1<<q2); j += (1<<(q1+1))) {
@@ -303,7 +335,7 @@ void apply4Targs(Matrix<DTYPE>& sv, QGate& gate) {
     masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q3));
 
 #ifdef OMP_ENABLED
-#pragma omp parallel for collapse(5)
+#pragma omp parallel for // collapse(5)
 #endif
     for (ll i = 0; i < sv.row; i += (1<<(q3+1))) {
         for (ll j = 0; j < (1<<q3); j += (1<<(q2+1))) {
@@ -379,7 +411,7 @@ void apply5Targs(Matrix<DTYPE>& sv, QGate& gate) {
     masks.push_back((1<<q0)|(1<<q1)|(1<<q2)|(1<<q3)|(1<<q4));
 
 #ifdef OMP_ENABLED
-#pragma omp parallel for collapse(6)
+#pragma omp parallel for // collapse(6)
 #endif
     for (ll i = 0; i < sv.row; i += (1<<(q4+1))) {
         for (ll j = 0; j < (1<<q4); j += (1<<(q3+1))) {

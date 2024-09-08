@@ -11,7 +11,7 @@
  */
 void SVSim(Matrix<DTYPE>& sv, QCircuit& qc);
 void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq);
-
+void SVSimNoFuser(Matrix<DTYPE>& sv, QCircuit& qc);
 //
 // Utility functions
 //
@@ -23,6 +23,7 @@ void SVSim(Matrix<DTYPE>& sv, vector<QGate>& gateSeq);
  * @param gate the processing gate
  */
 void svsimForGate(Matrix<DTYPE>& sv, QGate& gate);
+void svsimForGateNoFuser(Matrix<DTYPE>& sv, QGate& gate);
 void applyPhase(Matrix<DTYPE>& sv, QGate& gate);
 void applyDiagonal(Matrix<DTYPE>& sv, QGate& gate);
 void apply1Targ(Matrix<DTYPE>& sv, QGate& gate);

@@ -339,24 +339,32 @@ QCircuit VQC1(int numQubits) {
 QCircuit VQC2(int numQubits) {
     QCircuit qc = QCircuit(numQubits, "VQC2");
 
-    for (int _ = 0; _ < 2; ++ _) {
-        for (int i = 0; i < numQubits; ++ i)
-            qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-        for (int i = 0; i < numQubits; ++ i)
-            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-        for (int i = 0; i < numQubits; ++ i) {
-            for (int j = 0; j < numQubits; ++ j) {
-                if (i == j)
-                    continue;
-                qc.barrier();
-                qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, j);
-            }
+    // for (int _ = 0; _ < 2; ++ _) {
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    for (int i = 0; i < numQubits; ++ i) {
+        for (int j = 0; j < numQubits; ++ j) {
+            if (i == j)
+                continue;
+            qc.barrier();
+            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, j);
         }
-        for (int i = 0; i < numQubits; ++ i)
-            qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-        for (int i = 0; i < numQubits; ++ i)
-            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    // }
     // for (int k = 0; k < 2; ++ k)
     //     for (int i = 0; i < numQubits; ++ i)
     //         qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
