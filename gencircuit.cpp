@@ -156,24 +156,26 @@ QCircuit QFT_Quirk(int numQubits) {
  */
 QCircuit QAOA(int numQubits) {
     QCircuit qc(numQubits, "QAOA");
-    for (int i = 0; i < numQubits; ++ i)
-        qc.h(i);
-    
-    for (int j = 0; j < numQubits; ++ j) {
-        for (int i = j + 1; i < numQubits; ++ i) {
-            qc.cx(j, i);
-            qc.rz(0.5, i);
-            qc.cx(j, i);
+
+    for (int p = 0; p < 2; ++ p) {
+        for (int i = 0; i < numQubits; ++ i)
+            qc.h(i);
+        
+        for (int j = 0; j < numQubits; ++ j) {
+            for (int i = j + 1; i < numQubits; ++ i) {
+                qc.cx(j, i);
+                qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+                qc.cx(j, i);
+            }
         }
+
+        for (int i = 0; i < numQubits; ++ i)
+            qc.h(i);
+        for (int i = 0; i < numQubits; ++ i)
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        for (int i = 0; i < numQubits; ++ i)
+            qc.h(i);
     }
-
-    for (int i = 0; i < numQubits; ++ i)
-        qc.h(i);
-    for (int i = 0; i < numQubits; ++ i)
-        qc.rz(0.5, i);
-    for (int i = 0; i < numQubits; ++ i)
-        qc.h(i);
-
     // qc.print();
     return qc;
 }
@@ -264,7 +266,7 @@ QCircuit VQC(int numQubits) {
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.ry((double)i / numQubits, i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
         // levels of CX
         for (int i = 0; i < numQubits-1; ++ i) {
             qc.cx(i, i+1);
@@ -273,7 +275,7 @@ QCircuit VQC(int numQubits) {
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.ry((double)i / numQubits, i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
 
     qc.print();
@@ -293,42 +295,42 @@ QCircuit VQC1(int numQubits) {
     for (int j = 0; j < 8; ++ j) {
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.h(i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
         for (int i = 0; i < numQubits-1; ++ i)
             qc.cx(i, i+1);
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.h(i);
+                qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
 
     for (int j = 0; j < 8; ++ j) {
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.h(i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
         for (int i = 1; i < numQubits; ++ i)
             qc.cx(i, i-1);
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.h(i);
+                qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
 
     for (int j = 0; j < 8; ++ j) {
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.h(i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
         for (int i = 0; i < numQubits-1; ++ i)
             qc.cx(i, i+1);
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.h(i);
+                qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 
 /**
- * @brief Generate VQC2 (a larger number of inseparable levels)
+ * @brief Generate VQC2 (circuit 5, a larger number of inseparable levels)
  * 
  * @param numQubits #Qubits
  * 
@@ -337,26 +339,44 @@ QCircuit VQC1(int numQubits) {
 QCircuit VQC2(int numQubits) {
     QCircuit qc = QCircuit(numQubits, "VQC2");
 
-    for (int k = 0; k < 2; ++ k)
+    for (int _ = 0; _ < 2; ++ _) {
         for (int i = 0; i < numQubits; ++ i)
-            qc.ry(2 * std::acos(-1.0), i);
-    
-    for (int i = 0; i < numQubits; ++ i) {
-        for (int k = 0; k < 1; ++ k)
-            for (int ii = 0; ii < numQubits; ++ ii)
-                qc.ry(0.5 * std::acos(-1.0), ii);
-        
-        for (int j = 0; j < numQubits; ++ j) {
-            if (i == j)
-                continue;
-            qc.barrier();
-            qc.cx(i, j);
+            qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        for (int i = 0; i < numQubits; ++ i)
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        for (int i = 0; i < numQubits; ++ i) {
+            for (int j = 0; j < numQubits; ++ j) {
+                if (i == j)
+                    continue;
+                qc.barrier();
+                qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, j);
+            }
         }
-    }
-
-    for (int k = 0; k < 2; ++ k)
         for (int i = 0; i < numQubits; ++ i)
-            qc.ry(2 * std::acos(-1.0), i);
+            qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        for (int i = 0; i < numQubits; ++ i)
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    }
+    // for (int k = 0; k < 2; ++ k)
+    //     for (int i = 0; i < numQubits; ++ i)
+    //         qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+
+    // for (int i = 0; i < numQubits; ++ i) {
+    //     for (int k = 0; k < 1; ++ k)
+    //         for (int ii = 0; ii < numQubits; ++ ii)
+    //             qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), ii);
+
+    //     for (int j = 0; j < numQubits; ++ j) {
+    //         if (i == j)
+    //             continue;
+    //         qc.barrier();
+    //         qc.cx(i, j);
+    //     }
+    // }
+
+    // for (int k = 0; k < 2; ++ k)
+    //     for (int i = 0; i < numQubits; ++ i)
+    //         qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
 
     // qc.print();
     return qc;

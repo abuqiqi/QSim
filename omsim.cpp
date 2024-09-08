@@ -167,6 +167,16 @@ void swapRow(ll r1, ll r2, Matrix<DTYPE>& gate) {
     memcpy(gate.data[r2], tmp, gate.row * sizeof(DTYPE));
 }
 
+// Swap two columns of a gate matrix
+void swapCol(ll c1, ll c2, Matrix<DTYPE>& gate) {
+    DTYPE tmp[gate.col];
+    for (ll i = 0; i < gate.row; ++ i) {
+        tmp[i] = gate.data[i][c1];
+        gate.data[i][c1] = gate.data[i][c2];
+        gate.data[i][c2] = tmp[i];
+    }
+}
+
 Matrix<DTYPE> gen2QubitGateMatrix(QGate& gate) {
     int span = gate.targetQubits[1] - gate.targetQubits[0] + 1;
     ll n = (1 << span);
@@ -184,7 +194,8 @@ Matrix<DTYPE> gen2QubitGateMatrix(QGate& gate) {
             }
         }
     }
-    // swap rows
+
+    // swap rows and cols
     ll mask0 = (1 << (span - 2));
     ll mask1 = 1;
     ll row;
@@ -194,6 +205,7 @@ Matrix<DTYPE> gen2QubitGateMatrix(QGate& gate) {
             // row := |.1..0>
             row = i ^ mask0 ^ mask1;
             swapRow(i, row, mat);
+            swapCol(i, row, mat);
         }
     }
     return mat;

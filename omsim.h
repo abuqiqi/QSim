@@ -50,3 +50,4 @@ Matrix<DTYPE> gen2QubitGateMatrix(QGate& gate);
  * @param gate return value
  */
 void swapRow(ll r1, ll r2, Matrix<DTYPE>& gate);
+void swapCol(ll c1, ll c2, Matrix<DTYPE>& gate);

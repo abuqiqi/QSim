@@ -21,13 +21,13 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, bool is
     controlQubits = controls_;
     targetQubits = targets_;
     params = {};
+    isDiagonal = false;
+    isDiagonal = (isDiag) ? true : this->isDiag();
     gmat = Matrix<DTYPE>::MatrixDict[gname];
     if (gmat == nullptr) {
         cout << "[ERROR] Gate " << gname << " not found in MatrixDict" << endl;
         exit(1);
     }
-    isDiagonal = false;
-    isDiagonal = (isDiag) ? true : this->isDiag();
 }
 
 /**
@@ -43,6 +43,8 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     controlQubits = controls_;
     targetQubits = targets_;
     params = {theta};
+    isDiagonal = false;
+    isDiagonal = (isDiag) ? true : this->isDiag();
 
     string matkey = gname + to_string(theta);
     gmat = Matrix<DTYPE>::MatrixDict[matkey];
@@ -66,8 +68,6 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, double 
     }
     Matrix<DTYPE>::MatrixDict[matkey] = make_shared<Matrix<DTYPE>>(move(mat));
     gmat = Matrix<DTYPE>::MatrixDict[matkey];
-    isDiagonal = false;
-    isDiagonal = (isDiag) ? true : this->isDiag();
 }
 
 /**
@@ -83,13 +83,13 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<
     controlQubits = controls_;
     targetQubits = targets_;
     params = {};
+    isDiagonal = false;
+    isDiagonal = (isDiag) ? true : this->isDiag();
     gmat = Matrix<DTYPE>::MatrixDict[gname];
     if (gmat == nullptr) {
         Matrix<DTYPE>::MatrixDict[gname] = make_shared<Matrix<DTYPE>>(move(mat));
         gmat = Matrix<DTYPE>::MatrixDict[gname];
     }
-    isDiagonal = false;
-    isDiagonal = (isDiag) ? true : this->isDiag();
 }
 
 // Copy construct a new QGate::QGate object

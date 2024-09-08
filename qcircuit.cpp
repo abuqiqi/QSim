@@ -349,14 +349,16 @@ void QCircuit::setDepths(int numDepths_) {
 void QCircuit::applyGates(vector<QGate>& gateSeq) {
     for (auto& gate : gateSeq) {
         if (gate.isIDE()) continue;
-        for (auto& qid : gate.qubits()) {
-            if (! gates[numDepths-1][qid].isIDE()) {
+
+        int start = gate.qubits()[0];
+        int end = gate.qubits()[gate.qubits().size()-1];
+        for (int i = start; i <= end; ++ i) {
+            if (! gates[numDepths-1][i].isIDE()) {
                 add_level();
                 break;
             }
         }
-        int start = gate.qubits()[0];
-        int end = gate.qubits()[gate.qubits().size()-1];
+
         for (int i = start; i <= end; ++ i) {
             gates[numDepths-1][i] = QGate("-", gate.controlQubits, gate.targetQubits);
         }
@@ -381,10 +383,10 @@ void QCircuit::print() {
     for (int i = numQubits - 1; i >= start; -- i) {
         cout << "q[" << i << "]\t";
         for (int j = 0; j < numDepths; ++ j) {
-            if (j > 10) {
-                cout << "...";
-                break;
-            }
+            // if (j > 10) {
+            //     cout << "...";
+            //     break;
+            // }
             if (gates[j][i].isControlQubit(i)) {
                 cout << "C";
             } else if (gates[j][i].isTargetQubit(i)) {
