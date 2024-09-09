@@ -20,6 +20,25 @@ vector<QGate> testkqubits(int k) {
     return gateSeq;
 }
 
+vector<QGate> testkfusion(int k) {
+    QCircuit subqc(k, "subqc");
+    vector<int> targs;
+    for (int i = 0; i < k; ++ i) {
+        subqc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        targs.push_back(i);
+    }
+    // subqc.print();
+    Matrix<DTYPE> subU = getOperationMatrix(subqc);
+    QGate kqubitgate(subqc.cmatkey(), {}, targs, subU);
+    // kqubitgate.print();
+
+    vector<QGate> gateSeq;
+    for (int i = 0; i < 120 / k; ++ i) {
+        gateSeq.push_back(kqubitgate);
+    }
+    return gateSeq;
+}
+
 // a controlled gate with k control qubits
 vector<QGate> testkctrls(int k) {
     // generate a controlled gate with k control qubits
@@ -144,7 +163,7 @@ QCircuit QFT_Quirk(int numQubits) {
     }
     qc.h(n);
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 
@@ -248,7 +267,7 @@ QCircuit Grover(int numQubits, int k) {
         }
     }
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 
@@ -278,7 +297,7 @@ QCircuit VQC(int numQubits) {
                 qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 
@@ -426,7 +445,7 @@ QCircuit RandomRegular(int numQubits, int numDepths) {
         }
     }
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 
@@ -587,7 +606,5 @@ QCircuit RandomRandom(int numQubits, int numDepths) {
     }
 
     qc.print();
-
-    cout << "[INFO] [RandomRandom] #Qubits: [" << qc.numQubits << "] #Gates: [" << numGates << "]" << endl;
     return qc;
 }

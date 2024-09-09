@@ -377,8 +377,8 @@ void QCircuit::applyGates(vector<QGate>& gateSeq) {
 void QCircuit::print() {
     printInfo();
     int start = 0;
-    if (numQubits >= 6) {
-        start = numQubits - 6;
+    if (numQubits >= 11) {
+        start = numQubits - 11;
     }
     for (int i = numQubits - 1; i >= start; -- i) {
         cout << "q[" << i << "]\t";
@@ -393,8 +393,11 @@ void QCircuit::print() {
                 cout << "T";
             } else if (gates[j][i].isMARK()) {
                 cout << "t";
+            } else {
+                cout << "I";
             }
-            cout << gates[j][i].gname << "\t"; 
+            // cout.width(5);
+            cout << setw(4) << left << gates[j][i].gname; // << "\t"; 
         }
         cout << endl;
     }

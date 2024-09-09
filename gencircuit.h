@@ -10,6 +10,7 @@
 //
 vector<QGate> testkctrls(int k);
 vector<QGate> testkqubits(int k);
+vector<QGate> testkfusion(int k);
 
 QCircuit test(int numQubits);
 QCircuit QFT(int numQubits);
