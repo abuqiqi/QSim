@@ -238,7 +238,7 @@ QCircuit Grover(int numQubits, int k) {
         qc.h(i);
     }
 
-    int numIterations = floor(std::acos(-1.0) / 4 * sqrt(pow(2, numQubits) / pow(2, k)));
+    int numIterations = 5; // floor(std::acos(-1.0) / 4 * sqrt(pow(2, numQubits) / pow(2, k)));
 
     vector<int> oracle, controlQubits;
     for (int i = 0; i < numQubits-k-1; ++ i) {
@@ -283,7 +283,7 @@ QCircuit VQC(int numQubits) {
 
     for (int j = 0; j < 1; ++ j) {
         // 2 levels of RY
-        for (int k = 0; k < 2; ++ k)
+        for (int k = 0; k < 1; ++ k)
             for (int i = 0; i < numQubits; ++ i)
                 qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
         // levels of CX
@@ -292,7 +292,7 @@ QCircuit VQC(int numQubits) {
             qc.barrier();
         }
         // 2 levels of RY
-        for (int k = 0; k < 2; ++ k)
+        for (int k = 0; k < 1; ++ k)
             for (int i = 0; i < numQubits; ++ i)
                 qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
