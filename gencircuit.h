@@ -22,6 +22,9 @@ QCircuit IQP(int numQubits);
 QCircuit VQC(int numQubits);
 QCircuit VQC1(int numQubits);
 QCircuit VQC2(int numQubits); // circuit 5
+QCircuit VQC_NN(int numQubits);
+QCircuit VQC_CB(int numQubits);
+QCircuit VQC_AA(int numQubits);
 
 // Generate a circuit with regular state vector using H, Z, X, CX gates
 QCircuit RandomRegular(int numQubits, int numDepths);

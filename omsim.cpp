@@ -13,13 +13,15 @@ Matrix<DTYPE> OMSim(Matrix<DTYPE>& sv, QCircuit& qc) {
  * @return Matrix<DTYPE> the operation matrix
  */
 Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
+    // qc.print();
+
     Matrix<DTYPE> opmat, levelmat;
     opmat.identity(1 << qc.numQubits);
     levelmat.identity(2);
 
     // calculate the operation matrix of the quantum circuit
     for (int j = 0; j < qc.numDepths; ++ j) {
-        // cout << "[DEBUG] level " << j << " ";
+        // cout << "[DEBUG] level " << j << endl;
         int qid = qc.numQubits-1;
 
         // get the highest gate matrix

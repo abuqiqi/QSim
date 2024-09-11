@@ -15,6 +15,7 @@ public:
     QGate(string gname_, vector<int> controls_, vector<int> targets_, bool isDiag = false);
     QGate(string gname_, vector<int> controls_, vector<int> targets_, double theta, bool isDiag = false);
     QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<DTYPE>& mat, bool isDiag = false);
+    QGate(string gname_, vector<int> controls_, vector<int> targets_, shared_ptr<Matrix<DTYPE>> gmat_, bool isDiag = false);
     QGate(const QGate& other);
 
     QGate& operator=(const QGate& other);

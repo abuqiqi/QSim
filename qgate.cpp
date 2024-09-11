@@ -92,6 +92,17 @@ QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, Matrix<
     }
 }
 
+QGate::QGate(string gname_, vector<int> controls_, vector<int> targets_, shared_ptr<Matrix<DTYPE>> gmat_, bool isDiag) {
+    gname = gname_;
+    controlQubits = controls_;
+    targetQubits = targets_;
+    params = {};
+    isDiagonal = false;
+    isDiagonal = (isDiag) ? true : this->isDiag();
+    Matrix<DTYPE>::MatrixDict[gname] = gmat_;
+    this->gmat = Matrix<DTYPE>::MatrixDict[gname];
+}
+
 // Copy construct a new QGate::QGate object
 QGate::QGate(const QGate& other) {
     gname = other.gname;

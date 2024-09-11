@@ -249,6 +249,36 @@ void QCircuit::ct(int ctrl, int targ) {
     gates[numDepths-1][targ] = QGate("T", {ctrl}, {targ});
 }
 
+void QCircuit::crx(double theta, int ctrl, int targ) {
+    int start = min(ctrl, targ);
+    int end = max(ctrl, targ);
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
+    for (int i = start; i <= end; ++i) {
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
+    }
+    gates[numDepths-1][targ] = QGate("RX", {ctrl}, {targ}, theta);
+}
+
+void QCircuit::cry(double theta, int ctrl, int targ) {
+    int start = min(ctrl, targ);
+    int end = max(ctrl, targ);
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
+    for (int i = start; i <= end; ++i) {
+        gates[numDepths-1][i] = QGate("-", {ctrl}, {targ});
+    }
+    gates[numDepths-1][targ] = QGate("RY", {ctrl}, {targ}, theta);
+}
+
 void QCircuit::crz(double theta, int ctrl, int targ) {
     int start = min(ctrl, targ);
     int end = max(ctrl, targ);

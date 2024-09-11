@@ -34,6 +34,8 @@ public:
     void cz(int ctrl, int targ);
     void cs(int ctrl, int targ);
     void ct(int ctrl, int targ);
+    void crx(double theta, int ctrl, int targ);
+    void cry(double theta, int ctrl, int targ);
     void crz(double theta, int ctrl, int targ);
     void cu1(double lambda, int ctrl, int targ);
     void swap(int qid1, int qid2);
