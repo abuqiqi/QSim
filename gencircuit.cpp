@@ -390,19 +390,19 @@ QCircuit VQC(int numQubits) {
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                // qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-                qc.ry(i, i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+                // qc.ry(i, i);
         // levels of CX
         for (int i = 0; i < numQubits-1; ++ i) {
-            qc.cx(i, i+1);
-            // qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+            // qc.cx(i, i+1);
+            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
             qc.barrier();
         }
         // 2 levels of RY
-        // for (int k = 0; k < 2; ++ k)
-        //     for (int i = 0; i < numQubits; ++ i)
-        //         qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-        //         // qc.ry(i, i);
+        for (int k = 0; k < 2; ++ k)
+            for (int i = 0; i < numQubits; ++ i)
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+                // qc.ry(i, i);
     }
 
     // qc.print();
