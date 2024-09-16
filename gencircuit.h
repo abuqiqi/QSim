@@ -26,6 +26,7 @@ QCircuit VQC_NN(int numQubits);
 QCircuit VQC_CB(int numQubits);
 QCircuit VQC_AA(int numQubits);
 QCircuit Hyperbolic(int numQubits);
+QCircuit QPE(int numQubits);
 
 // Generate a circuit with regular state vector using H, Z, X, CX gates
 QCircuit RandomRegular(int numQubits, int numDepths);

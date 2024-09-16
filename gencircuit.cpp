@@ -743,3 +743,29 @@ QCircuit Hyperbolic(int numQubits) {
     qc.print();
     return qc;
 }
+
+QCircuit QPE(int numQubits) {
+    QCircuit qc = QCircuit(numQubits, "QPE");
+
+    qc.x(0);
+    for (int i = 1; i < numQubits; ++ i) {
+        qc.h(i);
+    }
+
+    for (int i = numQubits-1; i > 0; -- i) {
+        qc.cu1(acos(-1.0) / pow(2, numQubits-i), i, 0);
+    }
+
+    // IQFT
+    qc.h(numQubits-1);
+    for (int i = numQubits-2; i > 0; -- i) {
+        for (int j = numQubits-1; j > i; -- j) {
+            int k = j - i + 1;
+            qc.cu1(-2 * acos(-1.0) / pow(2, k), j, i);
+        }
+        qc.h(i);
+    }
+
+    qc.print();
+    return qc;
+}
