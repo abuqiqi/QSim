@@ -285,8 +285,13 @@ QCircuit VQC_NN(int numQubits) { // nearest neighbour
         // for (int i = 0; i + 1 < numQubits; i += 2)
         //     qc.crx((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
 
-        for (int i = numQubits - 1; i > 0; i -= 2)
+        for (int i = numQubits - 2; i > 0; i -= 2)
             qc.crx((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i-1);
+            // qc.cx(i, i-1);
+
+        for (int i = numQubits - 1; i > 0; i -= 2)
+            qc.crx((double)rand() / RAND_MAX * 2 * acos(-1.0), i-1, i);
+            // qc.cx(i, i-1);
 
         for (int i = 0; i < numQubits; ++ i)
             qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
@@ -297,8 +302,6 @@ QCircuit VQC_NN(int numQubits) { // nearest neighbour
         // for (int i = 1; i + 1 < numQubits; i += 2)
         //     qc.crx((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
 
-        for (int i = numQubits - 2; i > 0; i -= 2)
-            qc.crx((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i-1);
 
         // for (int i = 1; i + 1 < numQubits; i += 2) {
         //     qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
@@ -330,7 +333,7 @@ QCircuit VQC_NN(int numQubits) { // nearest neighbour
         //     qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
     }
 #endif
-    // qc.print();
+    qc.print();
     return qc;
 }
 
@@ -394,8 +397,8 @@ QCircuit VQC(int numQubits) {
                 // qc.ry(i, i);
         // levels of CX
         for (int i = 0; i < numQubits-1; ++ i) {
-            // qc.cx(i, i+1);
-            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+            qc.cx(i, i+1);
+            // qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
             qc.barrier();
         }
         // 2 levels of RY
@@ -710,6 +713,30 @@ QCircuit RandomRandom(int numQubits, int numDepths) {
 
         if (qc.numDepths >= numDepths) {
             break;
+        }
+    }
+
+    qc.print();
+    return qc;
+}
+
+QCircuit Hyperbolic(int numQubits) {
+    QCircuit qc = QCircuit(numQubits, "Hyperbolic");
+
+    for (int _ = 0; _ < 3; ++ _) {
+        for (int i = 0; i < numQubits; ++ i) {
+            qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        }
+
+        for (int i = 0; i < numQubits; ++ i) {
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        }
+
+        for (int k = 0; k < numQubits; ++ k) {
+            for (int i = 1; i + (1 << k) < numQubits; i += 2*(1 << k)) {
+                // qc.cx(i + (1 << k), i);
+                qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i + (1 << k), i);
+            }
         }
     }
 
