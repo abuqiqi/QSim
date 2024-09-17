@@ -208,12 +208,12 @@ QCircuit IQP(int numQubits) {
 
     for (int i = 0; i < numQubits; ++ i) {
         for (int j = i + 1; j < numQubits; ++ j) {
-            qc.cu1(random(10) * acos(-1.0) / 2, j, i);
+            qc.cu1(random(100) * acos(-1.0) / 2, j, i);
         }
     }
 
     for (int i = 0; i < numQubits; ++ i) {
-        qc.u1(random(10) * acos(-1.0) / 8, i);
+        qc.u1(random(100) * acos(-1.0) / 8, i);
     }
 
     for (int i = 0; i < numQubits; ++ i) {
