@@ -323,7 +323,22 @@ bool Matrix<T>::isZero() const {
 // Get the size of the matrix
 template<typename T>
 ll Matrix<T>::getSize() const {
-    return row * col;
+    // check if is a diagonal matrix
+    if (row == col) {
+        bool isDiagonal = true;
+        for (ll i = 0; i < row; i++) {
+            for (ll j = 0; j < col; j++) {
+                if (i != j && data[i][j] != (DTYPE)0) {
+                    isDiagonal = false;
+                    break;
+                }
+            }
+        }
+        if (isDiagonal) {
+            return row * sizeof(T);
+        }
+    }
+    return row * col * sizeof(T);
 }
 
 // Print the matrix

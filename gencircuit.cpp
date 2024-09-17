@@ -766,6 +766,6 @@ QCircuit QPE(int numQubits) {
         qc.h(i);
     }
 
-    qc.print();
+    // qc.print();
     return qc;
 }

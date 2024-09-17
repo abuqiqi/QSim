@@ -61,5 +61,5 @@ public:
     //
     ll numQGates();
     string cmatkey();
-    virtual void getFuseInfo();
+    virtual void getFuseInfo() {};
 };

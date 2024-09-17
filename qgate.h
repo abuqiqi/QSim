@@ -26,7 +26,7 @@ public:
     int numControls(); // the number of control qubits of the gate
     int numTargets(); // the number of target qubits of the gate
     ll numMuls(int numQubits); // #multiplications
-    size_t memSize(); // the memory footprint of the gate matrix
+    size_t memSize(bool); // the memory footprint of the gate matrix
     string gmatKey(); // the key of the gate matrix in the MatrixDict
     shared_ptr<Matrix<DTYPE>> getFullMatrix(); // the full gate matrix for a controlled gate
 

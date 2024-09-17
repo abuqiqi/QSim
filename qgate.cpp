@@ -164,10 +164,10 @@ ll QGate::numMuls(int numQubits) {
     return (1 << numQubits) * (1 << numTargets()) / (1 << numControls());
 }
 
-// The memory footprint of the gate matrix
-size_t QGate::memSize() {
+// The memory footprint (Bytes) of the gate matrix
+size_t QGate::memSize(bool diagonal) {
     size_t mem_size = 0;
-    if (isDiagonal) { // deal with diagonal matrix
+    if (diagonal && isDiagonal) { // deal with diagonal matrix
         mem_size += (1 << numTargets());
     } else {
         mem_size += (1 << numTargets()) * (1 << numTargets());
