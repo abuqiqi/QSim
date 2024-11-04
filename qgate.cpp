@@ -281,6 +281,26 @@ bool QGate::isCX() {
     return gname == "X" && controlQubits.size() == 1;
 }
 
+// Check if the gate is an identity gate
+bool QGate::isIdentity() {
+    assert(gmat != nullptr);
+    assert(gmat->row == gmat->col);
+    // check if gmat is an identity matrix
+    for (int i = 0; i < gmat->row; ++ i) {
+        for (int j = 0; j < gmat->col; ++ j) {
+            if (i == j) {
+                if (gmat->data[i][j] != (DTYPE)1) {
+                    return false;
+                }
+            } else {
+                if (gmat->data[i][j] != (DTYPE)0) {
+                    return false;
+                }
+            }
+        }
+    }
+}
+
 // Check if qubit[qid] is a control qubit of the gate
 bool QGate::isControlQubit(int qid) {
     return find(controlQubits.begin(), controlQubits.end(), qid) != controlQubits.end();
