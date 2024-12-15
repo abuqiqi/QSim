@@ -299,6 +299,7 @@ bool QGate::isIdentity() {
             }
         }
     }
+    return true;
 }
 
 // Check if qubit[qid] is a control qubit of the gate

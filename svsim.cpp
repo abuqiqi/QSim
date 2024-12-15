@@ -1,7 +1,7 @@
 #include "svsim.h"
 #include "timer.h"
 
-#define OMP_ENABLED
+// #define OMP_ENABLED
 
 void SVSim_targ(Matrix<DTYPE>& sv, QCircuit& qc, bool diagonal) {
     for (int j = 0; j < qc.numDepths; ++ j) {
