@@ -366,7 +366,7 @@ void Matrix<T>::print(string fname) const {
         for (ll i = 0; i < row; i++) {
             for (ll j = 0; j < col; j++) {
                 out -> width(13);
-                *out << fixed << setprecision(2) << data[i][j];
+                *out << fixed << setprecision(4) << data[i][j];
             }
             *out << endl;
         }
