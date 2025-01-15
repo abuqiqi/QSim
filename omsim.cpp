@@ -21,7 +21,7 @@ Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
 
     // calculate the operation matrix of the quantum circuit
     for (int j = 0; j < qc.numDepths; ++ j) {
-        // cout << "[DEBUG] level " << j << endl;
+        // cout << "[DEBUG] [OMSim] level " << j << endl;
         int qid = qc.numQubits-1;
 
         // get the highest gate matrix
@@ -36,6 +36,7 @@ Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
         // Calculate the operation matrix of level j //////////////////////////
         // Step 1. Let levelmat be the complete gate matrix of the highest gate
         levelmat = move(getCompleteMatrix(qc.gates[j][qid]));
+        // levelmat.print();
         // ///////////////////////////////////////////////////////////////////////////
         // Step 2. Get the complete gate matrices of the remaining gates
         //      Step 2.1. Skip the MARK gates
@@ -45,8 +46,13 @@ Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
                 continue;
             }
             Matrix<DTYPE> tmpmat = move(getCompleteMatrix(qc.gates[j][i]));
+            // qc.gates[j][i].print();
+            // cout << "[DEBUG] tmpmat: " << endl;
+            // tmpmat.print();
             levelmat = move(levelmat.tensorProduct(tmpmat));
         }
+        // levelmat.print();
+        // cout << endl;
         // ///////////////////////////////////////////////////////////////////////////
         // Step 3. Update the operation matrix opmat for the entire circuit
         opmat = levelmat * opmat;
@@ -67,9 +73,10 @@ Matrix<DTYPE> getOperationMatrix(QCircuit& qc) {
  * @return Matrix<DTYPE> a complete gate matrix
  */
 Matrix<DTYPE> getCompleteMatrix(QGate& gate) {
-    // if (gate.isMARK() || gate.isIDE() || gate.isSingle()) {
-    //     return * gate.gmat;
-    // }
+    if (gate.isMARK() || gate.isIDE() /*|| gate.isSingle()*/) {
+        // return * gate.gmat;
+        return * Matrix<DTYPE>::MatrixDict[gate.gname];
+    }
     if (gate.is2QubitControlled()) {
         // Return the complete matrix of a 2-qubit controlled gate
         return genControlledGateMatrix(gate);

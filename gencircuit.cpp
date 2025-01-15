@@ -74,16 +74,18 @@ QCircuit test(int numQubits) {
 QCircuit QFT(int numQubits) {
     QCircuit qc(numQubits, "QFT");
     for (int i = numQubits - 1; i >= numQubits / 2; -- i) {
-        qc.h(i);
+        qc.h(numQubits-1-i);
     }
     for (int i = numQubits - 1; i >= 0; -- i) {
-        qc.h(i);
+        qc.h(numQubits-1-i);
         for (int j = i - 1; j >= 0; -- j) {
             int k = i - j + 1;
-            qc.cu1(2 * acos(-1.0) / pow(2, k), j, i);
+            qc.cu1(2 * acos(-1.0) / pow(2, k), numQubits-1-j, numQubits-1-i);
         }
     }
-    // qc.print();
+
+    // qc.printInfo();
+    qc.print();
     return qc;
 }
 
@@ -176,7 +178,7 @@ QCircuit QFT_Quirk(int numQubits) {
 QCircuit QAOA(int numQubits) {
     QCircuit qc(numQubits, "QAOA");
 
-    for (int p = 0; p < 2; ++ p) {
+    for (int p = 0; p < 1; ++ p) {
         for (int i = 0; i < numQubits; ++ i)
             qc.h(i);
         
@@ -195,7 +197,7 @@ QCircuit QAOA(int numQubits) {
         for (int i = 0; i < numQubits; ++ i)
             qc.h(i);
     }
-    // qc.print();
+    qc.printInfo();
     return qc;
 }
 
@@ -232,13 +234,14 @@ QCircuit IQP(int numQubits) {
  * @return a quantum circuit
  */
 QCircuit Grover(int numQubits, int k) {
-    QCircuit qc(numQubits, "Grover");
+    int numIterations = 5;
+    int totalIterations = floor(std::acos(-1.0) / 4 * sqrt(pow(2, numQubits) / pow(2, k)));
+
+    QCircuit qc(numQubits, "Grover_"+to_string(numIterations)+"-"+to_string(totalIterations));
 
     for (int i = 0; i < numQubits; ++ i) {
         qc.h(i);
     }
-
-    int numIterations = 5; // floor(std::acos(-1.0) / 4 * sqrt(pow(2, numQubits) / pow(2, k)));
 
     vector<int> oracle, controlQubits;
     for (int i = 0; i < numQubits-k-1; ++ i) {
@@ -267,7 +270,8 @@ QCircuit Grover(int numQubits, int k) {
         }
     }
 
-    // qc.print();
+    qc.print();
+    // qc.printInfo();
     return qc;
 }
 
@@ -389,12 +393,12 @@ QCircuit VQC_AA(int numQubits) {
 QCircuit VQC(int numQubits) {
     QCircuit qc = QCircuit(numQubits, "VQC");
 
-    for (int j = 0; j < 3; ++ j) {
+    for (int j = 0; j < 1; ++ j) {
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-                // qc.ry(i, i);
+                // qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+                qc.ry(i, i);
         // levels of CX
         for (int i = 0; i < numQubits-1; ++ i) {
             qc.cx(i, i+1);
@@ -404,11 +408,11 @@ QCircuit VQC(int numQubits) {
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-                // qc.ry(i, i);
+                // qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+                qc.ry(i, i);
     }
 
-    // qc.print();
+    qc.printInfo();
     return qc;
 }
 
@@ -706,7 +710,11 @@ QCircuit RandomRandom(int numQubits, int numDepths) {
         // else {
             // random single-qubit gates
             for (int j = 0; j < numQubits; ++ j) {
-                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), j);
+                if (j % 2 == 0)
+                    qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), j);
+                else
+                    // qc.rx((double)j / numQubits * 2 * acos(-0.1), j);
+                    qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), j);
                 ++ numGates;
             }
         // }
@@ -716,7 +724,7 @@ QCircuit RandomRandom(int numQubits, int numDepths) {
         }
     }
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 

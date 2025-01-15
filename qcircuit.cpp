@@ -25,10 +25,11 @@ QCircuit::QCircuit(int numQubits_, int numDepths_, string name_){
 
 QCircuit::QCircuit(QCircuit& qc, int qidFrom, int qidTo, int depthFrom, int depthTo) {
     numQubits = qidTo - qidFrom;
-    numDepths = depthTo - depthFrom;
+    numDepths = 0;
     name = qc.name + "_q" + to_string(qidFrom) + "-" + to_string(qidTo) + "_d" + to_string(depthFrom) + "-" + to_string(depthTo);
+    vector<QGate> level;
     for (int j = depthFrom; j < depthTo; ++ j) {
-        vector<QGate> level;
+        level.clear();
         for (int i = qidFrom; i < qidTo; ++ i) {
             QGate gate = qc.gates[j][i];
             if (gate.isMARK() && (gate.targetQubits[0] < qidFrom || gate.targetQubits[0] >= qidTo)) {
@@ -45,8 +46,22 @@ QCircuit::QCircuit(QCircuit& qc, int qidFrom, int qidTo, int depthFrom, int dept
                 level.push_back(gate);
             }
         }
+        // if a level is all identity, skip
+        for (auto& gate : level) {
+            if (gate.gname != "I") {
+                ++ numDepths;
+                gates.push_back(level);
+                break;
+            }
+        }
+        // ++ numDepths;
+        // gates.push_back(level);
+    }
+    if (numDepths == 0) {
+        ++ numDepths;
         gates.push_back(level);
     }
+    // this->print();
 }
 
 // 

@@ -148,7 +148,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T>& matrx) const {
     if (col != matrx.row) {
         cout << "[ERROR] Matrix *: col != matrx.row. " << endl;
         this->print();
-        matrx.print();
+        // matrx.print();
         exit(1);
     }
     Matrix<T> temp(row, matrx.col);
