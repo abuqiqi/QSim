@@ -41,3 +41,11 @@ QCircuit RandomRZ(int numQubits, int numDepths);
 // Generate a circuit with random state vector using RY, CX gates
 QCircuit RandomRandom(int numQubits, int numDepths);
 
+// SupermarQ
+QCircuit GHZ(int numQubits);
+// Mermin-Bell only 3q and 4q
+QCircuit BitCode(int numQubits, int numRounds=2);
+QCircuit PhaseCode(int numQubits, int numRounds=2);
+QCircuit VQE(int numQubits, int numLayers=2);
+QCircuit Hamiltonian(int numQubits, int numSteps=2);
+QCircuit QAOAFermionicSwapProxy(int numQubits);

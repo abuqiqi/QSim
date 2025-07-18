@@ -769,3 +769,146 @@ QCircuit QPE(int numQubits) {
     // qc.print();
     return qc;
 }
+
+QCircuit GHZ(int numQubits) {
+    QCircuit qc = QCircuit(numQubits, "GHZ");
+
+    qc.h(0);
+    for (int i = 0; i < numQubits; ++ i) {
+        qc.cx(i, i + 1);
+    }
+
+    qc.print();
+    return qc;
+}
+
+QCircuit BitCode(int numQubits, int numRounds) {
+    QCircuit qc = QCircuit(numQubits, "BitCode");
+
+    // Initialize the data qubits
+    for (int i = 0; i < numQubits; i += 2) {
+        qc.x(i);
+    }
+
+    // Apply measurement rounds
+    for (int r = 0; r < numRounds; ++ r) {
+        for (int i = 1; i < numQubits; i += 2) {
+            qc.cx(i - 1, i);
+            qc.cx(i + 1, i);
+        }
+    }
+
+    return qc;
+}
+
+QCircuit PhaseCode(int numQubits, int numRounds) {
+    QCircuit qc = QCircuit(numQubits, "PhaseCode");
+
+    // Initialize the data qubits
+    for (int i = 0; i < numQubits; i += 2) {
+        qc.x(i);
+        qc.h(i);
+    }
+
+    // Apply measurement rounds
+    for (int r = 0; r < numRounds; ++ r) {
+        for (int i = 0; i < numQubits; ++ i) {
+            qc.h(i);
+        }
+
+        for (int i = 1; i < numQubits; i += 2) {
+            qc.cz(i - 1, i);
+            qc.cz(i + 1, i);
+        }
+
+        for (int i = 0; i < numQubits; ++ i) {
+            qc.h(i);
+        }
+    }
+
+    return qc;
+}
+
+QCircuit VQE(int numQubits, int numLayers) {
+    QCircuit qc = QCircuit(numQubits, "VQE");
+
+    for (int t = 0; t < numLayers; ++ t) {
+        for (int i = 0; i < numQubits; ++ i)
+            qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        for (int i = 0; i < numQubits; ++ i)
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        for (int i = 0; i < numQubits-1; ++ i)
+            qc.cx(i, i+1);
+        for (int i = 0; i < numQubits; ++ i)
+            qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+        for (int i = 0; i < numQubits; ++ i)
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    }
+
+    return qc;
+}
+
+QCircuit Hamiltonian(int numQubits, int numSteps) {
+    QCircuit qc = QCircuit(numQubits, "Hamiltonian");
+
+    for (int t = 0; t < numSteps; ++ t) {
+        // Single qubit terms
+        for (int i = 0; i < numQubits; ++ i) {
+            qc.h(i);
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+            qc.h(i);
+        }
+        // Coupling terms
+        for (int i = 0; i < numQubits-1; ++ i) {
+            qc.cx(i, i+1);
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i+1);
+            qc.cx(i, i+1);
+        }
+    }
+
+    return qc;
+}
+
+QCircuit QAOAFermionicSwapProxy(int numQubits) {
+    QCircuit qc = QCircuit(numQubits, "QAOAFermionicSwapProxy");
+
+    for (int i = 0; i < numQubits; ++ i) {
+        qc.h(i);
+    }
+
+    // Create the swap covers
+    std::vector<std::pair<int, int>> cover_a;
+    std::vector<std::pair<int, int>> cover_b;
+    
+    // Populate cover_a with odd-indexed pairs (1,2), (3,4), etc.
+    for (int idx = 1; idx < numQubits; idx += 2) {
+        cover_a.emplace_back(idx - 1, idx);
+    }
+    
+    // Populate cover_b with even-indexed pairs (2,3), (4,5), etc.
+    for (int idx = 2; idx < numQubits; idx += 2) {
+        cover_b.emplace_back(idx - 1, idx);
+    }
+
+    // Apply swap network layers
+    for (int layer = 0; layer < numQubits; ++layer) {
+        // Alternate between cover_a and cover_b
+        const auto& cover = (layer % 2 == 0) ? cover_a : cover_b;
+        
+        // Apply swaps for this layer
+        for (const auto& pair : cover) {
+            int i = pair.first;
+            int j = pair.second;
+            
+            qc.cx(i, j);
+            qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), j);
+            qc.cx(j, i);
+            qc.cx(i, j);
+        }
+    }
+
+    for (int i = 0; i < numQubits; ++ i)
+        qc.rx((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+
+    return qc;
+}
