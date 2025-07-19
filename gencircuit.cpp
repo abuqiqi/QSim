@@ -774,11 +774,11 @@ QCircuit GHZ(int numQubits) {
     QCircuit qc = QCircuit(numQubits, "GHZ");
 
     qc.h(0);
-    for (int i = 0; i < numQubits; ++ i) {
+    for (int i = 0; i < numQubits - 1; ++ i) {
         qc.cx(i, i + 1);
     }
 
-    qc.print();
+    // qc.print();
     return qc;
 }
 
@@ -798,6 +798,7 @@ QCircuit BitCode(int numQubits, int numRounds) {
         }
     }
 
+    qc.print();
     return qc;
 }
 
@@ -848,6 +849,43 @@ QCircuit VQE(int numQubits, int numLayers) {
     return qc;
 }
 
+QCircuit VQEQMin1(int numQubits, int numLayers) {
+    QCircuit qc = QCircuit(numQubits, "VQEQMin1");
+    for (int t = 0; t < numLayers; ++ t) {
+        qc.h(0);
+        for (int i = 0; i < numQubits-1; ++ i) {
+            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+        }
+    }
+    for (int i = 0; i < numQubits-1; ++ i)
+        qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    return qc;
+}
+
+QCircuit VQEQMin2(int numQubits, int numLayers) {
+    QCircuit qc = QCircuit(numQubits, "VQEQMin2");
+    for (int t = 0; t < numLayers; ++ t) {
+        if (t % 2 == 0) {
+            qc.swap(0, 1);
+            for (int i = 1; i < numQubits-1; ++ i) {
+                // qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+                // qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+                qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i+1);
+            }
+        } else {
+            for (int i = 0; i < numQubits-1; ++ i) {
+                // qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+                // qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+                qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i+1);
+            }
+        }
+    }
+    for (int i = 0; i < numQubits-1; ++ i)
+        qc.rz((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+    return qc;
+}
+
 QCircuit Hamiltonian(int numQubits, int numSteps) {
     QCircuit qc = QCircuit(numQubits, "Hamiltonian");
 
@@ -866,6 +904,37 @@ QCircuit Hamiltonian(int numQubits, int numSteps) {
         }
     }
 
+    return qc;
+}
+
+QCircuit HamiltonianQMin1(int numQubits, int numSteps) {
+    QCircuit qc = QCircuit(numQubits, "HamiltonianQMin1");
+    for (int t = 0; t < numSteps; ++ t) {
+        qc.h(0);
+        for (int i = 0; i < numQubits-1; ++ i) {
+            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+        }
+    }
+    return qc;
+}
+
+QCircuit HamiltonianQMin2(int numQubits, int numSteps) {
+    QCircuit qc = QCircuit(numQubits, "HamiltonianQMin2");
+    for (int t = 0; t < numSteps; ++ t) {
+        if (t % 2 == 0) {
+            qc.swap(0, 1);
+            for (int i = 1; i < numQubits-1; ++ i) {
+                qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+                qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+            }
+        } else {
+            for (int i = 0; i < numQubits-1; ++ i) {
+                qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+                qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+            }
+        }
+    }
     return qc;
 }
 
