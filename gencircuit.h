@@ -45,7 +45,11 @@ QCircuit RandomRandom(int numQubits, int numDepths);
 QCircuit GHZ(int numQubits);
 // Mermin-Bell only 3q and 4q
 QCircuit BitCode(int numQubits, int numRounds=2);
+QCircuit BitCodeQMin1(int numQubits, int numRounds=2);
+QCircuit BitCodeQMin2(int numQubits, int numRounds=2);
 QCircuit PhaseCode(int numQubits, int numRounds=2);
+QCircuit PhaseCodeQMin1(int numQubits, int numRounds=2);
+QCircuit PhaseCodeQMin2(int numQubits, int numRounds=2);
 QCircuit VQE(int numQubits, int numLayers=2);
 QCircuit VQEQMin1(int numQubits, int numLayers=2);
 QCircuit VQEQMin2(int numQubits, int numLayers=2);

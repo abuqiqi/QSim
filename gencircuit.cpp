@@ -784,21 +784,48 @@ QCircuit GHZ(int numQubits) {
 
 QCircuit BitCode(int numQubits, int numRounds) {
     QCircuit qc = QCircuit(numQubits, "BitCode");
-
     // Initialize the data qubits
     for (int i = 0; i < numQubits; i += 2) {
         qc.x(i);
     }
-
     // Apply measurement rounds
     for (int r = 0; r < numRounds; ++ r) {
-        for (int i = 1; i < numQubits; i += 2) {
+        for (int i = 1; i < numQubits - 1; i += 2) {
             qc.cx(i - 1, i);
             qc.cx(i + 1, i);
         }
     }
+    // qc.print();
+    return qc;
+}
 
-    qc.print();
+QCircuit BitCodeQMin1(int numQubits, int numRounds) {
+    QCircuit qc = QCircuit(numQubits, "BitCodeQMin1");
+    // Initialize the data qubits
+    for (int i = 0; i < numQubits; i += 2) {
+        qc.x(i);
+    }
+    // Apply measurement rounds
+    for (int r = 0; r < numRounds; ++ r) {
+        for (int i = 1; i < numQubits - 1; i += 2) {
+            // qc.ccx({i-1, i+1}, i);
+            qc.h(i);
+        }
+    }
+    return qc;
+}
+
+QCircuit BitCodeQMin2(int numQubits, int numRounds) {
+    QCircuit qc = QCircuit(numQubits, "BitCodeQMin2");
+    // Initialize the data qubits
+    for (int i = 0; i < numQubits; i += 2) {
+        qc.x(i);
+    }
+    // Apply measurement rounds
+    for (int i = 1; i < numQubits - 1; i += 2) {
+        // qc.ccx({i-1, i+1}, i);
+        qc.h(i);
+    }
     return qc;
 }
 
@@ -817,7 +844,7 @@ QCircuit PhaseCode(int numQubits, int numRounds) {
             qc.h(i);
         }
 
-        for (int i = 1; i < numQubits; i += 2) {
+        for (int i = 1; i < numQubits-1; i += 2) {
             qc.cz(i - 1, i);
             qc.cz(i + 1, i);
         }
@@ -827,6 +854,44 @@ QCircuit PhaseCode(int numQubits, int numRounds) {
         }
     }
 
+    return qc;
+}
+
+QCircuit PhaseCodeQMin1(int numQubits, int numRounds) {
+    QCircuit qc = QCircuit(numQubits, "PhaseCodeQMin1");
+
+    // Apply measurement rounds
+    for (int r = 0; r < numRounds; ++ r) {
+        for (int i = 0; i < numQubits; i += 2) {
+            qc.h(i);
+        }
+        for (int i = 1; i < numQubits-1; i += 2) {
+            // qc.ccz({i-1, i+1}, i);
+            qc.h(i);
+        }
+    }
+    for (int i = 0; i < numQubits; i += 2) {
+        qc.h(i);
+    }
+    return qc;
+}
+
+QCircuit PhaseCodeQMin2(int numQubits, int numRounds) {
+    QCircuit qc = QCircuit(numQubits, "PhaseCodeQMin2");
+
+    // Apply measurement rounds
+    for (int r = 0; r < numRounds; ++ r) {
+        for (int i = 0; i < numQubits; i += 2) {
+            qc.h(i);
+        }
+        for (int i = 1; i < numQubits-1; i += 2) {
+            // qc.ccz({i-1, i+1}, i);
+            qc.h(i);
+        }
+    }
+    for (int i = 0; i < numQubits; i += 2) {
+        qc.h(i);
+    }
     return qc;
 }
 

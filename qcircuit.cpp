@@ -331,6 +331,28 @@ void QCircuit::swap(int qid1, int qid2) {
 }
 
 /**
+ * @brief Apply a controlled-X gate with multiple control qubits
+ * 
+ * @param ctrls 
+ * @param targ 
+ */
+void QCircuit::ccx(vector<int> ctrls, int targ) {
+    sort(ctrls.begin(), ctrls.end());
+    int start = ctrls[0] < targ ? ctrls[0] : targ;
+    int end = ctrls[ctrls.size()-1] > targ ? ctrls[ctrls.size()-1] : targ;
+    for (int i = start; i <= end; ++ i) {
+        if (! gates[numDepths-1][i].isIDE()) {
+            add_level();
+            break;
+        }
+    }
+    for (int i = start; i <= end; ++ i) {
+        gates[numDepths-1][i] = QGate("-", ctrls, {targ});
+    }
+    gates[numDepths-1][targ] = QGate("X", ctrls, {targ});
+}
+
+/**
  * @brief Apply a controlled-Z gate with multiple control qubits
  * 
  * @param ctrls 

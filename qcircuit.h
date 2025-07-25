@@ -43,6 +43,7 @@ public:
     //
     // multi-qubit gates
     //
+    void ccx(vector<int> ctrls, int targ);
     void ccz(vector<int> ctrls, int targ);
 
     //
