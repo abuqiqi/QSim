@@ -397,19 +397,19 @@ QCircuit VQC(int numQubits) {
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                // qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-                qc.ry(i, i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+                // qc.ry(i, i);
         // levels of CX
         for (int i = 0; i < numQubits-1; ++ i) {
-            qc.cx(i, i+1);
-            // qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
+            // qc.cx(i, i+1);
+            qc.crz((double)rand() / RAND_MAX * 2 * acos(-1.0), i, i+1);
             qc.barrier();
         }
         // 2 levels of RY
         for (int k = 0; k < 2; ++ k)
             for (int i = 0; i < numQubits; ++ i)
-                // qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
-                qc.ry(i, i);
+                qc.ry((double)rand() / RAND_MAX * 2 * acos(-1.0), i);
+                // qc.ry(i, i);
     }
 
     qc.printInfo();
@@ -759,6 +759,8 @@ QCircuit QPE(int numQubits) {
     for (int i = 1; i < numQubits; ++ i) {
         qc.h(i);
     }
+    qc.swap(0, numQubits-1);
+    qc.swap(0, numQubits-1);
 
     for (int i = numQubits-1; i > 0; -- i) {
         qc.cu1(acos(-1.0) / pow(2, numQubits-i), i, 0);
@@ -766,14 +768,19 @@ QCircuit QPE(int numQubits) {
 
     // IQFT
     qc.h(numQubits-1);
+    qc.swap(0, numQubits-1);
+    qc.swap(0, numQubits-1);
     for (int i = numQubits-2; i > 0; -- i) {
         for (int j = numQubits-1; j > i; -- j) {
             int k = j - i + 1;
             qc.cu1(-2 * acos(-1.0) / pow(2, k), j, i);
         }
         qc.h(i);
+        qc.swap(0, numQubits-1);
+        qc.swap(0, numQubits-1);
     }
 
-    // qc.print();
+    qc.printInfo();
+    qc.print();
     return qc;
 }
